@@ -1,221 +1,201 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Board from './Board';
-import Hand from './Hand';
-import './BattleScreen.css';
+import Card from './Card';
 import { createDeck, shuffleDeck } from '../gameLogic';
+import './BattleScreen.css';
 
 const PLAYER_STARTING_HP = 10;
 const ENEMY_STARTING_HP = 10;
-const STARTING_HAND_SIZE = 6;
+const STARTING_HAND_SIZE = 5;
 const BOARD_SIZE = 4;
 
 const BattleScreen = () => {
-  const [gameState, setGameState] = useState('initializing');
-  const [playerHP, setPlayerHP] = useState(PLAYER_STARTING_HP);
-  const [playerDeck, setPlayerDeck] = useState([]);
-  const [playerHand, setPlayerHand] = useState([]);
-  const [playerBoard, setPlayerBoard] = useState(Array(BOARD_SIZE).fill(null));
-  const [playerGraveyard, setPlayerGraveyard] = useState([]);
-  const [enemyHP, setEnemyHP] = useState(ENEMY_STARTING_HP);
-  const [enemyDeck, setEnemyDeck] = useState([]);
-  const [enemyHand, setEnemyHand] = useState([]);
-  const [enemyBoard, setEnemyBoard] = useState(Array(BOARD_SIZE).fill(null));
-  const [enemyGraveyard, setEnemyGraveyard] = useState([]);
+    const [gameState, setGameState] = useState('initializing');
+    const [playerHP, setPlayerHP] = useState(PLAYER_STARTING_HP);
+    const [playerDeck, setPlayerDeck] = useState([]);
+    const [playerHand, setPlayerHand] = useState([]);
+    const [playerBoard, setPlayerBoard] = useState(Array(BOARD_SIZE).fill({ card: null }));
+    const [playerGraveyard, setPlayerGraveyard] = useState([]);
 
-  const drawCards = useCallback((deck, graveyard, amount) => {
-    let currentDeck = [...deck];
-    let currentGraveyard = [...graveyard];
-    let drawn = [];
+    const [enemyHP, setEnemyHP] = useState(ENEMY_STARTING_HP);
+    const [enemyDeck, setEnemyDeck] = useState([]);
+    const [enemyHand, setEnemyHand] = useState([]);
+    const [enemyBoard, setEnemyBoard] = useState(Array(BOARD_SIZE).fill({ card: null }));
+    const [enemyGraveyard, setEnemyGraveyard] = useState([]);
 
-    if (currentDeck.length < amount) {
-      console.log("Deck is empty. Shuffling graveyard.");
-      const shuffledGraveyard = shuffleDeck(currentGraveyard);
-      currentDeck = [...currentDeck, ...shuffledGraveyard];
-      currentGraveyard = [];
-    }
+    const [draggedCard, setDraggedCard] = useState(null);
 
-    drawn = currentDeck.slice(0, amount);
-    const remaining = currentDeck.slice(amount);
+    const drawCards = useCallback((deck, graveyard, amount) => {
+        let currentDeck = [...deck];
+        let currentGraveyard = [...graveyard];
+        let drawn = [];
 
-    return { drawn, remainingDeck: remaining, newGraveyard: currentGraveyard };
-  }, []);
+        if (currentDeck.length < amount) {
+            const shuffledGraveyard = shuffleDeck(currentGraveyard);
+            currentDeck = [...currentDeck, ...shuffledGraveyard];
+            currentGraveyard = [];
+        }
 
-  useEffect(() => {
-    const startNewGame = () => {
-      const { drawn: playerInitialHand, remainingDeck: playerRemainingDeck } = drawCards(shuffleDeck(createDeck()), [], STARTING_HAND_SIZE);
-      const { drawn: enemyInitialHand, remainingDeck: enemyRemainingDeck } = drawCards(shuffleDeck(createDeck()), [], STARTING_HAND_SIZE);
+        drawn = currentDeck.slice(0, amount);
+        const remaining = currentDeck.slice(amount);
 
-      setPlayerHP(PLAYER_STARTING_HP);
-      setPlayerDeck(playerRemainingDeck);
-      setPlayerHand(playerInitialHand);
-      setPlayerBoard(Array(BOARD_SIZE).fill(null));
-      setPlayerGraveyard([]);
+        return { drawn, remainingDeck: remaining, newGraveyard: currentGraveyard };
+    }, []);
 
-      setEnemyHP(ENEMY_STARTING_HP);
-      setEnemyDeck(enemyRemainingDeck);
-      setEnemyHand(enemyInitialHand);
-      setEnemyBoard(Array(BOARD_SIZE).fill(null));
-      setEnemyGraveyard([]);
+    useEffect(() => {
+        const startNewGame = () => {
+            const { drawn: pInitialHand, remainingDeck: pDeck } = drawCards(shuffleDeck(createDeck()), [], STARTING_HAND_SIZE);
+            const { drawn: eInitialHand, remainingDeck: eDeck } = drawCards(shuffleDeck(createDeck()), [], STARTING_HAND_SIZE);
 
-      setGameState('player_turn');
+            setPlayerHP(PLAYER_STARTING_HP);
+            setPlayerDeck(pDeck);
+            setPlayerHand(pInitialHand);
+            setPlayerBoard(Array(BOARD_SIZE).fill({ card: null }));
+            setPlayerGraveyard([]);
+
+            setEnemyHP(ENEMY_STARTING_HP);
+            setEnemyDeck(eDeck);
+            setEnemyHand(eInitialHand);
+            setEnemyBoard(Array(BOARD_SIZE).fill({ card: null }));
+            setEnemyGraveyard([]);
+
+            setGameState('player_turn');
+        };
+        startNewGame();
+    }, [drawCards]);
+
+    const handleDragStart = (e, card) => {
+        if (gameState !== 'player_turn') return;
+        setDraggedCard(card);
+        e.dataTransfer.setData("cardId", card.id);
     };
-    startNewGame();
-  }, [drawCards]);
 
-  const handleCardDrop = (cardInfo, target, slotIndex) => {
-    if (gameState !== 'player_turn' || target !== 'board') return;
-    const cardToMove = playerHand.find(c => c.id === cardInfo.cardId);
-    if (!cardToMove) return;
-    const newHand = playerHand.filter(c => c.id !== cardInfo.cardId);
-    const newBoard = [...playerBoard];
-    if (newBoard[slotIndex]) {
-      newHand.push(newBoard[slotIndex]);
-    }
-    newBoard[slotIndex] = { ...cardToMove, faceUp: false };
-    setPlayerHand(newHand);
-    setPlayerBoard(newBoard);
-  };
+    const handleDrop = (e, slotIndex) => {
+        e.preventDefault();
+        if (gameState !== 'player_turn' || !draggedCard || playerBoard[slotIndex].card) return;
 
-  const handleResetPlacement = () => {
-    if (gameState !== 'player_turn') return;
-    const cardsOnBoard = playerBoard.filter(c => c !== null);
-    setPlayerHand([...playerHand, ...cardsOnBoard]);
-    setPlayerBoard(Array(BOARD_SIZE).fill(null));
-  };
+        const newPlayerBoard = [...playerBoard];
+        newPlayerBoard[slotIndex] = { card: { ...draggedCard, faceUp: true } }; // Let's make them face up for now to see
+        setPlayerBoard(newPlayerBoard);
 
-  const handleBattle = () => {
-    if (gameState !== 'player_turn') return;
-    setGameState('resolving');
-    const enemyCardsToPlay = [...enemyHand].sort(() => 0.5 - Math.random()).slice(0, BOARD_SIZE);
-    const newEnemyHand = enemyHand.filter(c => !enemyCardsToPlay.find(played => played.id === c.id));
-    const newEnemyBoard = Array(BOARD_SIZE).fill(null);
-    enemyCardsToPlay.forEach((card, i) => newEnemyBoard[i] = { ...card, faceUp: false });
-    setEnemyHand(newEnemyHand);
-    setEnemyBoard(newEnemyBoard);
+        const newPlayerHand = playerHand.filter(card => card.id !== draggedCard.id);
+        setPlayerHand(newPlayerHand);
 
-    setTimeout(() => {
-      const revealedPBoard = playerBoard.map(c => c ? { ...c, faceUp: true } : null);
-      const revealedEBoard = newEnemyBoard.map(c => c ? { ...c, faceUp: true } : null);
-      setPlayerBoard(revealedPBoard);
-      setEnemyBoard(revealedEBoard);
+        setDraggedCard(null);
+    };
 
-      setTimeout(() => calculateCombat(revealedPBoard, revealedEBoard), 1000);
-    }, 500);
-  };
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
 
-  const calculateCombat = (pBoard, eBoard) => {
-    let pScores = Array(BOARD_SIZE).fill(0);
-    let eScores = Array(BOARD_SIZE).fill(0);
+    const handleBattle = () => {
+        if (gameState !== 'player_turn') return;
+        setGameState('resolving');
 
-    // First, check for special abilities that grant bonuses
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      const pCard = pBoard[i];
-      const eCard = eBoard[i];
-      if (!pCard || !eCard) continue;
+        // Simple AI: play random cards
+        const enemyCardsToPlay = [...enemyHand].sort(() => 0.5 - Math.random()).slice(0, BOARD_SIZE);
+        const newEnemyHand = enemyHand.filter(c => !enemyCardsToPlay.find(played => played.id === c.id));
+        const newEnemyBoard = Array(BOARD_SIZE).fill({ card: null });
+        enemyCardsToPlay.forEach((card, i) => {
+            if (playerBoard[i].card) { // Only play a card if player has one there
+                newEnemyBoard[i] = { card: { ...card, faceUp: true } };
+            }
+        });
+        setEnemyHand(newEnemyHand);
+        setEnemyBoard(newEnemyBoard);
 
-      // Player's card 1 ability
-      if (pCard.number === 1 && (eCard.number === 8 || eCard.number === 9)) {
-        if (i > 0 && pBoard[i-1]) pScores[i-1]++;
-        if (i < BOARD_SIZE - 1 && pBoard[i+1]) pScores[i+1]++;
-      }
-      // Player's card 2 ability
-      if (pCard.number === 2 && eCard.number === 9) {
-        if (i > 0 && pBoard[i-1]) pScores[i-1]++;
-        if (i < BOARD_SIZE - 1 && pBoard[i+1]) pScores[i+1]++;
-      }
-      // Enemy's card 1 ability
-      if (eCard.number === 1 && (pCard.number === 8 || pCard.number === 9)) {
-        if (i > 0 && eBoard[i-1]) eScores[i-1]++;
-        if (i < BOARD_SIZE - 1 && eBoard[i+1]) eScores[i+1]++;
-      }
-      // Enemy's card 2 ability
-      if (eCard.number === 2 && pCard.number === 9) {
-        if (i > 0 && eBoard[i-1]) eScores[i-1]++;
-        if (i < BOARD_SIZE - 1 && eBoard[i+1]) eScores[i+1]++;
-      }
-    }
+        setTimeout(() => calculateCombat(playerBoard, newEnemyBoard), 1000);
+    };
 
-    // Now, calculate the winner of each lane
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      const pCard = pBoard[i];
-      const eCard = eBoard[i];
-      if (!pCard || !eCard) continue;
+    const calculateCombat = (pBoard, eBoard) => {
+        let playerDamage = 0;
+        let enemyDamage = 0;
 
-      if ((pCard.number + pScores[i]) > (eCard.number + eScores[i])) {
-        pScores[i] = 1; // This lane is won by player
-        eScores[i] = 0;
-      } else if ((eCard.number + eScores[i]) > (pCard.number + pScores[i])) {
-        eScores[i] = 1; // This lane is won by enemy
-        pScores[i] = 0;
-      } else {
-        pScores[i] = 0; // Draw
-        eScores[i] = 0;
-      }
-    }
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            const pCard = pBoard[i].card;
+            const eCard = eBoard[i].card;
 
-    const totalPlayerScore = pScores.reduce((a, b) => a + b, 0);
-    const totalEnemyScore = eScores.reduce((a, b) => a + b, 0);
+            if (pCard && eCard) {
+                if (pCard.number > eCard.number) {
+                    enemyDamage++;
+                } else if (eCard.number > pCard.number) {
+                    playerDamage++;
+                }
+            } else if (pCard && !eCard) {
+                enemyDamage++;
+            }
+        }
 
-    if (totalPlayerScore > totalEnemyScore) {
-      setEnemyHP(prev => prev - (totalPlayerScore - totalEnemyScore));
-    } else if (totalEnemyScore > totalPlayerScore) {
-      setPlayerHP(prev => prev - (totalEnemyScore - totalPlayerScore));
-    }
+        if (playerDamage > 0) setPlayerHP(hp => Math.max(0, hp - playerDamage));
+        if (enemyDamage > 0) setEnemyHP(hp => Math.max(0, hp - enemyDamage));
 
-    setTimeout(() => endRound(pBoard, eBoard), 1500);
-  };
+        setTimeout(() => endRound(pBoard, eBoard), 1500);
+    };
 
-  const endRound = (pBoard, eBoard) => {
-    // Update graveyards with cards from the board
-    const newPlayerGraveyard = [...playerGraveyard, ...pBoard.filter(c => c !== null)];
-    const newEnemyGraveyard = [...enemyGraveyard, ...eBoard.filter(c => c !== null)];
-    setPlayerGraveyard(newPlayerGraveyard);
-    setEnemyGraveyard(newEnemyGraveyard);
+    const endRound = (pBoard, eBoard) => {
+        const newPlayerGraveyard = [...playerGraveyard, ...pBoard.map(s => s.card).filter(c => c)];
+        const newEnemyGraveyard = [...enemyGraveyard, ...eBoard.map(s => s.card).filter(c => c)];
+        setPlayerGraveyard(newPlayerGraveyard);
+        setEnemyGraveyard(newEnemyGraveyard);
 
-    // Draw new cards
-    const pDrawAmount = STARTING_HAND_SIZE - playerHand.length;
-    const eDrawAmount = STARTING_HAND_SIZE - enemyHand.length;
+        const pDrawAmount = STARTING_HAND_SIZE - playerHand.length;
+        const eDrawAmount = STARTING_HAND_SIZE - enemyHand.length;
 
-    const { drawn: pDrawn, remainingDeck: pDeck, newGraveyard: pNewGrave } = drawCards(playerDeck, newPlayerGraveyard, pDrawAmount);
-    const { drawn: eDrawn, remainingDeck: eDeck, newGraveyard: eNewGrave } = drawCards(enemyDeck, newEnemyGraveyard, eDrawAmount);
+        const { drawn: pDrawn, remainingDeck: pDeck, newGraveyard: pGrave } = drawCards(playerDeck, newPlayerGraveyard, pDrawAmount);
+        const { drawn: eDrawn, remainingDeck: eDeck, newGraveyard: eGrave } = drawCards(enemyDeck, newEnemyGraveyard, eDrawAmount);
 
-    setPlayerDeck(pDeck);
-    setPlayerGraveyard(pNewGrave);
-    setPlayerHand(prev => [...prev, ...pDrawn]);
+        setPlayerDeck(pDeck);
+        setPlayerHand(prev => [...prev, ...pDrawn]);
+        setPlayerGraveyard(pGrave);
 
-    setEnemyDeck(eDeck);
-    setEnemyGraveyard(eNewGrave);
-    setEnemyHand(prev => [...prev, ...eDrawn]);
+        setEnemyDeck(eDeck);
+        setEnemyHand(prev => [...prev, ...eDrawn]);
+        setEnemyGraveyard(eGrave);
 
-    // Reset boards and state
-    setPlayerBoard(Array(BOARD_SIZE).fill(null));
-    setEnemyBoard(Array(BOARD_SIZE).fill(null));
-    setGameState('player_turn');
-  };
+        setPlayerBoard(Array(BOARD_SIZE).fill({ card: null }));
+        setEnemyBoard(Array(BOARD_SIZE).fill({ card: null }));
+        setGameState('player_turn');
+    };
 
-  const isPlayerBoardFull = playerBoard.filter(c => c !== null).length === BOARD_SIZE;
+    const isPlayerBoardFull = playerBoard.every(slot => slot.card !== null);
 
-  return (
-    <div className="battle-screen">
-      <div className="enemy-info">
-        <p>Enemy HP: {enemyHP}</p>
-        <p>Cards in Hand: {enemyHand.length}</p>
-      </div>
-      <Board playerSlots={playerBoard} opponentSlots={enemyBoard} onCardDrop={handleCardDrop} />
-      <div className="player-info">
-        <p>Player HP: {playerHP}</p>
-        <p>Cards in Deck: {playerDeck.length}</p>
-      </div>
-      <div className="actions">
-        <button onClick={handleResetPlacement} disabled={gameState !== 'player_turn'}>Reset</button>
-        <button onClick={handleBattle} disabled={!isPlayerBoardFull || gameState !== 'player_turn'}>
-          Battle!
-        </button>
-      </div>
-      <h2>Your Hand</h2>
-      <Hand cards={playerHand} />
-    </div>
-  );
+    return (
+        <div className="battle-screen">
+            <div className="opponent-info">
+                <h2>Opponent HP: {enemyHP}</h2>
+                <div className="hand-container opponent-hand">
+                    {enemyHand.map((card, i) => <div key={i} className="card-placeholder"></div>)}
+                </div>
+            </div>
+
+            <Board
+                playerSlots={playerBoard}
+                opponentSlots={enemyBoard}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+            />
+
+            <div className="player-info">
+                <h2>Player HP: {playerHP}</h2>
+                <div className="hand-container player-hand">
+                    {playerHand.map(card => (
+                        <Card
+                            key={card.id}
+                            card={card}
+                            isFaceUp={true}
+                            onDragStart={(e) => handleDragStart(e, card)}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <div className="actions">
+              <button onClick={handleBattle} disabled={gameState !== 'player_turn' || playerBoard.every(s => !s.card)}>
+                Battle!
+              </button>
+            </div>
+        </div>
+    );
 };
 
 export default BattleScreen;
