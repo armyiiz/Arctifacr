@@ -1,0 +1,55 @@
+.route-selection-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+  box-sizing: border-box;
+}
+
+.route-title {
+  font-size: 3rem;
+  font-family: 'Cinzel', serif;
+  margin-bottom: 40px;
+  text-shadow: 2px 2px 8px #00ffff;
+}
+
+.routes-list {
+  display: flex;
+  gap: 30px;
+}
+
+.route-item {
+  width: 200px;
+  padding: 20px;
+  background-color: #2c2c2c;
+  border: 2px solid #555;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.route-item:not(.locked):hover {
+  border-color: #00ffff;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 255, 255, 0.2);
+}
+
+.route-item.locked {
+  background-color: #1e1e1e;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.lock-icon {
+  font-size: 3rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+}
