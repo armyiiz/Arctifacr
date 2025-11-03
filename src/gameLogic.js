@@ -2,7 +2,7 @@
 
 // This will eventually be populated with all cards from the game's design.
 // For now, we'll use a basic set.
-const ALL_CARDS = [
+export const ALL_CARDS = [
   { id: 1, name: 'Traveller_1', number: 1, art: 'Traveller' },
   { id: 2, name: 'Traveller_2', number: 1, art: 'Traveller' },
   { id: 3, name: 'Traveller_3', number: 1, art: 'Traveller' },
@@ -48,4 +48,33 @@ export const shuffleDeck = (deck) => {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+};
+
+// --- Story Mode Logic ---
+import { STAGE_POOLS } from './storyData.js';
+
+/**
+ * Generates a random route for the story mode.
+ * A route consists of 11 stages.
+ */
+export const generateRoute = () => {
+  const route = [];
+
+  // Helper to get a random element from an array
+  const getRandomFromPool = (pool) => pool[Math.floor(Math.random() * pool.length)];
+
+  // The route structure is roughly:
+  // 5 early stages, 5 mid stages, 1 final boss stage.
+  for (let i = 0; i < 5; i++) {
+    route.push(getRandomFromPool(STAGE_POOLS.EARLY));
+  }
+  for (let i = 0; i < 5; i++) {
+    route.push(getRandomFromPool(STAGE_POOLS.MID));
+  }
+
+  // Add the final boss stage
+  route.push(STAGE_POOLS.FINAL[0]);
+
+  // Add unique IDs to each stage for state management
+  return route.map((stage, index) => ({ ...stage, id: `stage_${index}` }));
 };

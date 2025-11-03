@@ -1,29 +1,46 @@
 import React from 'react';
 import './RouteSelection.css';
+import { STAGE_TYPES } from '../storyData';
 
-const RouteSelection = ({ onSelectRoute }) => {
-  // Placeholder for route data
-  const routes = [
-    { id: 1, name: 'Forest Path', difficulty: 'Easy' },
-    { id: 2, name: 'Mountain Pass', difficulty: 'Medium', locked: true },
-    { id: 3, name: 'Cursed Swamp', difficulty: 'Hard', locked: true },
-  ];
+const getStageIcon = (type) => {
+  switch (type) {
+    case STAGE_TYPES.BATTLE: return '⚔️';
+    case STAGE_TYPES.ELITE_BATTLE: return '💀';
+    case STAGE_TYPES.TREASURE: return '💎';
+    case STAGE_TYPES.SHOP: return '💰';
+    case STAGE_TYPES.BOSS: return '👑';
+    default: return '?';
+  }
+};
 
+const RouteSelection = ({ route, currentStageIndex, onSelectStage }) => {
   return (
     <div className="route-selection-container">
-      <h1 className="route-title">Choose Your Path</h1>
-      <div className="routes-list">
-        {routes.map(route => (
-          <div
-            key={route.id}
-            className={`route-item ${route.locked ? 'locked' : ''}`}
-            onClick={() => !route.locked && onSelectRoute(route.id)}
-          >
-            <h2>{route.name}</h2>
-            <p>Difficulty: {route.difficulty}</p>
-            {route.locked && <div className="lock-icon">🔒</div>}
-          </div>
-        ))}
+      <h1 className="route-title">Choose Your Next Encounter</h1>
+      <div className="route-map">
+        {route.map((stage, index) => {
+          const isCurrent = index === currentStageIndex;
+          const isCompleted = index < currentStageIndex;
+          const isLocked = index > currentStageIndex;
+
+          let stageClass = 'stage-node';
+          if (isCurrent) stageClass += ' current';
+          if (isCompleted) stageClass += ' completed';
+          if (isLocked) stageClass += ' locked';
+
+          return (
+            <React.Fragment key={stage.id}>
+              <div
+                className={stageClass}
+                onClick={() => onSelectStage(index)}
+              >
+                <div className="stage-icon">{getStageIcon(stage.type)}</div>
+                <div className="stage-name">{stage.type}</div>
+              </div>
+              {index < route.length - 1 && <div className="route-connector"></div>}
+            </React.Fragment>
+          );
+        })}
       </div>
     </div>
   );

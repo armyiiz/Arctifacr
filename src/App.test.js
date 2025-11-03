@@ -15,6 +15,6 @@ test('renders main menu first, then navigates to route selection', () => {
   fireEvent.click(startGameButton);
 
   // 3. Check if the route selection screen is rendered
-  const routeTitle = screen.getByText(/Choose Your Path/i);
+  const routeTitle = screen.getByText(/Choose Your Next Encounter/i);
   expect(routeTitle).toBeInTheDocument();
 });
