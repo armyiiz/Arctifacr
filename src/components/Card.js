@@ -2,24 +2,26 @@ import React from 'react';
 import './Card.css';
 
 const Card = ({ card, isFaceUp, onClick, onDragStart }) => {
-  // The 'flipped' class is now controlled by the isFaceUp prop
-  const cardContainerClass = `card-container ${isFaceUp ? 'flipped' : ''}`;
+  const cardContent = isFaceUp ? (
+    <div className="card-face card-front">
+      <div className="card-art" style={{ backgroundImage: `url(/art/cards/${card.art}.png)` }}></div>
+      <div className="card-number">{card.number}</div>
+      <div className="card-name">{card.name}</div>
+    </div>
+  ) : (
+    <div className="card-face card-back"></div>
+  );
 
   return (
     <div
-      className={cardContainerClass}
+      className={`card-container ${isFaceUp ? 'flipped' : ''}`}
       onClick={onClick}
       draggable={onDragStart ? true : false}
       onDragStart={onDragStart}
+      data-card-id={card.id}
     >
       <div className="card-inner">
-        {/* Front of the card */}
-        <div className="card-face card-front">
-          <div className="card-number">{card.number}</div>
-          <div className="card-art"></div>
-        </div>
-        {/* Back of the card */}
-        <div className="card-face card-back"></div>
+        {cardContent}
       </div>
     </div>
   );
