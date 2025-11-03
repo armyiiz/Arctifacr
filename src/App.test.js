@@ -1,12 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders battle screen', async () => {
+test('renders battle screen with player and opponent sections', () => {
   render(<App />);
-  // Use findByText which waits for the element to appear
-  const titleElement = await screen.findByText(/Player HP/i);
-  expect(titleElement).toBeInTheDocument();
 
-  const enemyHpElement = await screen.findByText(/Enemy HP/i);
-  expect(enemyHpElement).toBeInTheDocument();
+  // Check for "Player" heading
+  const playerHeading = screen.getByText(/Player/i);
+  expect(playerHeading).toBeInTheDocument();
+
+  // Check for "Opponent" heading
+  const opponentHeading = screen.getByText(/Opponent/i);
+  expect(opponentHeading).toBeInTheDocument();
 });

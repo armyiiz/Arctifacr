@@ -1,38 +1,25 @@
 import React from 'react';
 import './Card.css';
 
-const Card = ({ card, faceUp = false, onClick, isDraggable = false, onDragStart }) => {
-  if (!card) {
-    return <div className="card-container empty"></div>;
-  }
-
-  const { id, name, number, art } = card;
-
-  const handleDragStart = (e) => {
-    if (onDragStart) {
-      // Send the card's id and its original location ('hand')
-      e.dataTransfer.setData('cardInfo', JSON.stringify({ cardId: id, origin: 'hand' }));
-      onDragStart(e, { cardId: id, origin: 'hand' });
-    }
-  };
-
-  const numberIcon = `/art/icons/Num_${number}.png`;
-  const cardArt = `/art/cards/${art}.png`;
+const Card = ({ card, isFaceUp, onClick, onDragStart }) => {
+  // The 'flipped' class is now controlled by the isFaceUp prop
+  const cardContainerClass = `card-container ${isFaceUp ? 'flipped' : ''}`;
 
   return (
     <div
-      className="card-container"
+      className={cardContainerClass}
       onClick={onClick}
-      draggable={isDraggable}
-      onDragStart={isDraggable ? handleDragStart : undefined}
+      draggable={onDragStart ? true : false}
+      onDragStart={onDragStart}
     >
-      <div className={`card ${faceUp ? 'face-up' : ''}`}>
-        <div className="card-face card-back"></div>
+      <div className="card-inner">
+        {/* Front of the card */}
         <div className="card-face card-front">
-          <img src={cardArt} alt={name} className="card-art" onError={(e) => { e.target.style.display = 'none'; }} />
-          <img src={numberIcon} alt={`Number ${number}`} className="card-number" onError={(e) => { e.target.style.display = 'none'; }}/>
-          <div className="card-name">{name}</div>
+          <div className="card-number">{card.number}</div>
+          <div className="card-art"></div>
         </div>
+        {/* Back of the card */}
+        <div className="card-face card-back"></div>
       </div>
     </div>
   );
