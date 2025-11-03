@@ -1,4 +1,5 @@
 // src/gameLogic.js
+import { STAGE_POOLS } from './storyData.js';
 
 // This will eventually be populated with all cards from the game's design.
 // For now, we'll use a basic set.
@@ -51,7 +52,6 @@ export const shuffleDeck = (deck) => {
 };
 
 // --- Story Mode Logic ---
-import { STAGE_POOLS } from './storyData.js';
 
 /**
  * Generates a random route for the story mode.
