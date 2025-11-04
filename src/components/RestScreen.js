@@ -11,8 +11,12 @@ const RestScreen = ({ stage, playerHP, maxHP, onContinue }) => {
     onContinue(healAmount); // Pass heal amount to parent to update state
   };
 
+  const style = {
+    backgroundImage: `url(/art/backgrounds/Campfire.png)`
+  };
+
   return (
-    <div className="rest-screen">
+    <div className="rest-screen" style={style}>
       <h1>A Moment of Respite</h1>
       <div className="rest-options">
         <div className="rest-option">
