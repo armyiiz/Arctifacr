@@ -11,66 +11,66 @@ export const STAGE_TYPES = {
 };
 
 // Defines all unique card types in the game.
-const UNIQUE_CARDS = [
-  { id: 'c001', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 1 },
-  { id: 'c002', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 2 },
-  { id: 'c003', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 3 },
-  { id: 'c004', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 4 },
-  { id: 'c005', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 5 },
-  { id: 'c006', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 6 },
-  { id: 'c007', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 7 },
-  { id: 'c008', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 8 },
-  { id: 'c009', name: 'Traveler', art: '/art/cards/Traveler.png', baseNumber: 9 },
+export const ALL_CARDS = [
+  { id: 'T01', name: 'Traveller', art: 'Traveller', number: 1 },
+  { id: 'T02', name: 'Traveller', art: 'Traveller', number: 2 },
+  { id: 'T03', name: 'Traveller', art: 'Traveller', number: 3 },
+  { id: 'T04', name: 'Traveller', art: 'Traveller', number: 4 },
+  { id: 'T05', name: 'Traveller', art: 'Traveller', number: 5 },
+  { id: 'T06', name: 'Traveller', art: 'Traveller', number: 6 },
+  { id: 'T07', name: 'Traveller', art: 'Traveller', number: 7 },
+  { id: 'T08', name: 'Traveller', art: 'Traveller', number: 8 },
+  { id: 'T09', name: 'Traveller', art: 'Traveller', number: 9 },
   // Shadow Route
-  { id: 'e001', name: 'Dark_Rat', art: '/art/cards/Dark_Rat.png', baseNumber: 2 },
-  { id: 'e002', name: 'Shadow_Hound', art: '/art/cards/Shadow_Hound.png', baseNumber: 4 },
-  { id: 'e003', name: 'Night_Reaper', art: '/art/cards/Night_Reaper.png', baseNumber: 6 },
-  { id: 'e004', name: 'Umbral_Knight_Commander', art: '/art/cards/Umbral_Knight_Commander.png', baseNumber: 8 },
+  { id: 'E01', name: 'Dark Rat', number: 2, art: 'Dark_Rat' },
+  { id: 'e002', name: 'Shadow_Hound', art: '/art/cards/Shadow_Hound.png', number: 4 },
+  { id: 'e003', name: 'Night_Reaper', art: '/art/cards/Night_Reaper.png', number: 6 },
+  { id: 'e004', name: 'Umbral_Knight_Commander', art: '/art/cards/Umbral_Knight_Commander.png', number: 8 },
   // Earth Route
-  { id: 'e005', name: 'Stone_Imp', art: '/art/cards/Stone_Imp.png', baseNumber: 2 },
-  { id: 'e006', name: 'Rockback_Boar', art: '/art/cards/Rockback_Boar.png', baseNumber: 4 },
-  { id: 'e007', name: 'Crystal_Rhino', art: '/art/cards/Crystal_Rhino.png', baseNumber: 6 },
-  { id: 'e008', name: 'Colossus_Titan', art: '/art/cards/Colossus_Titan.png', baseNumber: 8 },
+  { id: 'e005', name: 'Stone_Imp', art: '/art/cards/Stone_Imp.png', number: 2 },
+  { id: 'e006', name: 'Rockback_Boar', art: '/art/cards/Rockback_Boar.png', number: 4 },
+  { id: 'e007', name: 'Crystal_Rhino', art: '/art/cards/Crystal_Rhino.png', number: 6 },
+  { id: 'e008', name: 'Colossus_Titan', art: '/art/cards/Colossus_Titan.png', number: 8 },
   // Steel Route
-  { id: 'e009', name: 'Iron_Ratling', art: '/art/cards/Iron_Ratling.png', baseNumber: 2 },
-  { id: 'e010', name: 'Steel_Wolf', art: '/art/cards/Steel_Wolf.png', baseNumber: 4 },
-  { id: 'e011', name: 'Blade_Golem', art: '/art/cards/Blade_Golem.png', baseNumber: 6 },
-  { id: 'e012', name: 'War_Machine_Juggernaut', art: '/art/cards/War_Machine_Juggernaut.png', baseNumber: 8 },
+  { id: 'e009', name: 'Iron_Ratling', art: '/art/cards/Iron_Ratling.png', number: 2 },
+  { id: 'e010', name: 'Steel_Wolf', art: '/art/cards/Steel_Wolf.png', number: 4 },
+  { id: 'e011', name: 'Blade_Golem', art: '/art/cards/Blade_Golem.png', number: 6 },
+  { id: 'e012', name: 'War_Machine_Juggernaut', art: '/art/cards/War_Machine_Juggernaut.png', number: 8 },
   // Forest Route
-  { id: 'e013', name: 'Vine_Serpent', art: '/art/cards/Vine_Serpent.png', baseNumber: 2 },
-  { id: 'e014', name: 'Spore_Bear', art: '/art/cards/Spore_Bear.png', baseNumber: 4 },
-  { id: 'e015', name: 'Ancient_Treant_Warrior', art: '/art/cards/Ancient_Treant_Warrior.png', baseNumber: 6 },
-  { id: 'e016', name: 'Greatwood_Guardian', art: '/art/cards/Greatwood_Guardian.png', baseNumber: 8 },
+  { id: 'e013', name: 'Vine_Serpent', art: '/art/cards/Vine_Serpent.png', number: 2 },
+  { id: 'e014', name: 'Spore_Bear', art: '/art/cards/Spore_Bear.png', number: 4 },
+  { id: 'e015', name: 'Ancient_Treant_Warrior', art: '/art/cards/Ancient_Treant_Warrior.png', number: 6 },
+  { id: 'e016', name: 'Greatwood_Guardian', art: '/art/cards/Greatwood_Guardian.png', number: 8 },
   // Radiance Route
-  { id: 'e017', name: 'Golden_Hawk', art: '/art/cards/Golden_Hawk.png', baseNumber: 2 },
-  { id: 'e018', name: 'Sun_Stag', art: '/art/cards/Sun_Stag.png', baseNumber: 4 },
-  { id: 'e019', name: 'Radiant_Knight', art: '/art/cards/Radiant_Knight.png', baseNumber: 6 },
-  { id: 'e020', name: 'Seraph_Judge', art: '/art/cards/Seraph_Judge.png', baseNumber: 8 },
+  { id: 'e017', name: 'Golden_Hawk', art: '/art/cards/Golden_Hawk.png', number: 2 },
+  { id: 'e018', name: 'Sun_Stag', art: '/art/cards/Sun_Stag.png', number: 4 },
+  { id: 'e019', name: 'Radiant_Knight', art: '/art/cards/Radiant_Knight.png', number: 6 },
+  { id: 'e020', name: 'Seraph_Judge', art: '/art/cards/Seraph_Judge.png', number: 8 },
   // Storm Route
-  { id: 'e021', name: 'Storm_Crow', art: '/art/cards/Storm_Crow.png', baseNumber: 2 },
-  { id: 'e022', name: 'Thunder_Lizard', art: '/art/cards/Thunder_Lizard.png', baseNumber: 4 },
-  { id: 'e023', name: 'Cyclone_Djinn', art: '/art/cards/Cyclone_Djinn.png', baseNumber: 6 },
-  { id: 'e024', name: 'Tempest_Colossus', art: '/art/cards/Tempest_Colossus.png', baseNumber: 8 },
+  { id: 'e021', name: 'Storm_Crow', art: '/art/cards/Storm_Crow.png', number: 2 },
+  { id: 'e022', name: 'Thunder_Lizard', art: '/art/cards/Thunder_Lizard.png', number: 4 },
+  { id: 'e023', name: 'Cyclone_Djinn', art: '/art/cards/Cyclone_Djinn.png', number: 6 },
+  { id: 'e024', name: 'Tempest_Colossus', art: '/art/cards/Tempest_Colossus.png', number: 8 },
   // Illusion Route
-  { id: 'e025', name: 'Trickster_Goblin', art: '/art/cards/Trickster_Goblin.png', baseNumber: 2 },
-  { id: 'e026', name: 'Mirror_Stalker', art: '/art/cards/Mirror_Stalker.png', baseNumber: 4 },
-  { id: 'e027', name: 'Dream_Hunter', art: '/art/cards/Dream_Hunter.png', baseNumber: 6 },
-  { id: 'e028', name: 'Vision_Warlock', art: '/art/cards/Vision_Warlock.png', baseNumber: 8 },
+  { id: 'e025', name: 'Trickster_Goblin', art: '/art/cards/Trickster_Goblin.png', number: 2 },
+  { id: 'e026', name: 'Mirror_Stalker', art: '/art/cards/Mirror_Stalker.png', number: 4 },
+  { id: 'e027', name: 'Dream_Hunter', art: '/art/cards/Dream_Hunter.png', number: 6 },
+  { id: 'e028', name: 'Vision_Warlock', art: '/art/cards/Vision_Warlock.png', number: 8 },
   // Cosmic Route
-  { id: 'e029', name: 'Falling_Starling', art: '/art/cards/Falling_Starling.png', baseNumber: 2 },
-  { id: 'e030', name: 'Meteor_Brute', art: '/art/cards/Meteor_Brute.png', baseNumber: 4 },
-  { id: 'e031', name: 'Astral_Serpent', art: '/art/cards/Astral_Serpent.png', baseNumber: 6 },
-  { id: 'e032', name: 'Void_Sentinel', art: '/art/cards/Void_Sentinel.png', baseNumber: 8 },
+  { id: 'e029', name: 'Falling_Starling', art: '/art/cards/Falling_Starling.png', number: 2 },
+  { id: 'e030', name: 'Meteor_Brute', art: '/art/cards/Meteor_Brute.png', number: 4 },
+  { id: 'e031', name: 'Astral_Serpent', art: '/art/cards/Astral_Serpent.png', number: 6 },
+  { id: 'e032', name: 'Void_Sentinel', art: '/art/cards/Void_Sentinel.png', number: 8 },
   // Death Route
-  { id: 'e033', name: 'Bone_Hound', art: '/art/cards/Bone_Hound.png', baseNumber: 2 },
-  { id: 'e034', name: 'Wailing_Ghoul', art: '/art/cards/Wailing_Ghoul.png', baseNumber: 4 },
-  { id: 'e035', name: 'Death_Knight', art: '/art/cards/Death_Knight.png', baseNumber: 6 },
-  { id: 'e036', name: 'Herald_of_the_Underworld', art: '/art/cards/Herald_of_the_Underworld.png', baseNumber: 8 },
+  { id: 'e033', name: 'Bone_Hound', art: '/art/cards/Bone_Hound.png', number: 2 },
+  { id: 'e034', name: 'Wailing_Ghoul', art: '/art/cards/Wailing_Ghoul.png', number: 4 },
+  { id: 'e035', name: 'Death_Knight', art: '/art/cards/Death_Knight.png', number: 6 },
+  { id: 'e036', name: 'Herald_of_the_Underworld', art: '/art/cards/Herald_of_the_Underworld.png', number: 8 },
 ];
 
 // Function to get a list of all unique cards, used for collection, deck building, etc.
 export const getAllCards = () => {
-    return UNIQUE_CARDS.map(card => ({ ...card, number: card.baseNumber }));
+    return ALL_CARDS;
 };
 
 
@@ -79,31 +79,31 @@ export const getAllCards = () => {
  */
 export const createPlayerDeck = (customDeck) => {
   if (customDeck) {
-    return customDeck.map((cardName, index) => {
-      const cardTemplate = UNIQUE_CARDS.find(c => c.name === cardName);
-      return { ...cardTemplate, id: `p${index}`, number: cardTemplate.baseNumber };
+    return customDeck.map((cardId, index) => {
+      const cardTemplate = ALL_CARDS.find(c => c.id === cardId);
+      return { ...cardTemplate, id: `p${index}` };
     });
   }
 
   const defaultDeckConfig = [
-      { name: 'Traveler', number: 1, count: 3 },
-      { name: 'Traveler', number: 2, count: 2 },
-      { name: 'Traveler', number: 3, count: 1 },
-      { name: 'Traveler', number: 4, count: 1 },
-      { name: 'Traveler', number: 5, count: 1 },
-      { name: 'Traveler', number: 6, count: 1 },
-      { name: 'Traveler', number: 7, count: 1 },
-      { name: 'Traveler', number: 8, count: 1 },
-      { name: 'Traveler', number: 9, count: 1 },
+      { id: 'T01', count: 3 },
+      { id: 'T02', count: 2 },
+      { id: 'T03', count: 1 },
+      { id: 'T04', count: 1 },
+      { id: 'T05', count: 1 },
+      { id: 'T06', count: 1 },
+      { id: 'T07', count: 1 },
+      { id: 'T08', count: 1 },
+      { id: 'T09', count: 1 },
   ];
 
   const deck = [];
   let cardIdCounter = 0;
   defaultDeckConfig.forEach(config => {
       for (let i = 0; i < config.count; i++) {
-          const cardTemplate = UNIQUE_CARDS.find(c => c.name === config.name && c.baseNumber === config.number);
+          const cardTemplate = ALL_CARDS.find(c => c.id === config.id);
           if (cardTemplate) {
-              deck.push({ ...cardTemplate, id: `p${cardIdCounter++}`, number: cardTemplate.baseNumber });
+              deck.push({ ...cardTemplate, id: `p${cardIdCounter++}`});
           }
       }
   });
