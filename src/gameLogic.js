@@ -71,7 +71,7 @@ export const createPlayerDeck = (customDeck) => {
   return deck;
 };
 
-export const createEnemyDeck = (enemy) => {
+export const createEnemyDeck = (enemyConfig) => {
     const deck = [];
     const baseDeck = [
         { number: 1, count: 3 }, { number: 2, count: 2 }, { number: 3, count: 1 },
@@ -79,14 +79,17 @@ export const createEnemyDeck = (enemy) => {
         { number: 7, count: 1 }, { number: 8, count: 1 }, { number: 9, count: 1 },
     ];
 
+    // Handle both array (from BattleScreen) and object (from generateRoute)
+    const enemyCardInfo = Array.isArray(enemyConfig) ? enemyConfig[0] : enemyConfig;
+
     let idCounter = 0;
     baseDeck.forEach(cardDef => {
         for (let i = 0; i < cardDef.count; i++) {
             deck.push({
                 id: `e${idCounter++}`,
-                name: enemy.name,
+                name: enemyCardInfo.name,
                 number: cardDef.number,
-                art: enemy.name,
+                art: enemyCardInfo.art,
             });
         }
     });
