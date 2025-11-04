@@ -92,3 +92,16 @@ export const storyChapter = {
       boss: { name: 'Specter', art: 'Specter' },
   },
 };
+
+export const ALL_ARTIFACTS = [
+  { id: 'charm_of_life', name: 'Charm of Life', description: 'เริ่ม run ด้วย +1 HP (จบ run หาย)', price: 50, imagePath: '/art/artifacts/Charm_of_Life.png' },
+  { id: 'second_wind', name: 'Second Wind', description: 'ตายครั้งแรกใน run ฟื้น HP ครึ่งนึง แล้วลุยต่อ (ใช้แล้วหาย)', price: 80, imagePath: '/art/artifacts/Second_Wind.png' },
+  { id: 'lucky_coin', name: 'Lucky Coin', description: 'หีบแสดงตัวเลือกเพิ่ม +1 ตัวเลือก (จบ run หาย)', price: 35, imagePath: '/art/artifacts/Lucky_Coin.png' },
+  { id: 'training_scroll', name: 'Training Scroll', description: 'อัปเกรดการ์ด 1 ใบ ทำให้เลขเพิ่ม +1 (ใช้ได้ครั้งเดียว)', price: 40, imagePath: '/art/artifacts/Training_Scroll.png' },
+  { id: 'granite_charm', name: 'Granite Charm', description: 'บล็อกดาเมจครั้งแรกที่โดน 1 ครั้งในแต่ละด่าน (จบ run หาย)', price: 60, imagePath: '/art/artifacts/Granite_Charm.png' },
+  { id: 'brooch_of_edge', name: 'Brooch of Edge', description: 'เมื่อแต้มรวมชนะมีโอกาส 20% ทำดาเมจเพิ่ม +1 (จบ run หาย)', price: 60, imagePath: '/art/artifacts/Brooch_of_Edge.png' },
+  { id: 'healers_leaf', name: 'Healer’s Leaf', description: 'เมื่อชนะการต่อสู้ ฟื้น +1 HP (จบ run หาย)', price: 30, imagePath: '/art/artifacts/Healers_Leaf.png' },
+  { id: 'reroll_key', name: 'Reroll Key', description: 'ในหีบ, สุ่มรายการใหม่ได้ 1 ครั้ง (ใช้แล้วหาย)', price: 20, imagePath: '/art/artifacts/Reroll_Key.png' },
+  { id: 'wide_sleeve', name: 'Wide Sleeve', description: 'สุ่มดูการ์ดที่ศัตรูวาง 1 ใบ (ใช้แล้วหาย)', price: 60, imagePath: '/art/artifacts/Wide_Sleeve.png' },
+  { id: 'merchants_pouch', name: 'Merchant’s Pouch', description: 'ได้รับทองเพิ่มเมื่อชนะ (จบ run หาย)', price: 30, imagePath: '/art/artifacts/Merchants_Pouch.png' },
+];
