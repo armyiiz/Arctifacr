@@ -15,6 +15,7 @@ const MAX_HP = 10;
 
 function App() {
   const [playerGold, setPlayerGold] = useState(0);
+  const [playerArtifacts, setPlayerArtifacts] = useState([]);
   const [currentScreen, setCurrentScreen] = useState('main_menu');
   const [route, setRoute] = useState([]);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
@@ -27,12 +28,17 @@ function App() {
     if (savedGold) {
       setPlayerGold(JSON.parse(savedGold));
     }
+    const savedArtifacts = localStorage.getItem('playerArtifacts');
+    if (savedArtifacts) {
+      setPlayerArtifacts(JSON.parse(savedArtifacts));
+    }
   }, []);
 
   // Save game data to localStorage
   useEffect(() => {
     localStorage.setItem('playerGold', JSON.stringify(playerGold));
-  }, [playerGold]);
+    localStorage.setItem('playerArtifacts', JSON.stringify(playerArtifacts));
+  }, [playerGold, playerArtifacts]);
 
   const handleStartGame = () => {
     setCurrentScreen('boss_selection');
