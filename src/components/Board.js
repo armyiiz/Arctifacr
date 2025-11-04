@@ -2,7 +2,7 @@ import React from 'react';
 import './Board.css';
 import Card from './Card';
 
-const Board = ({ playerSlots, opponentSlots, onCardDrop }) => {
+const Board = ({ playerSlots, opponentSlots, onCardDrop, onTouchMove, onTouchEnd }) => {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -22,6 +22,8 @@ const Board = ({ playerSlots, opponentSlots, onCardDrop }) => {
         className="card-slot"
         onDragOver={handleDragOver}
         onDrop={(e) => handleDrop(e, index)}
+        onTouchMove={onTouchMove}
+        onTouchEnd={(e) => onTouchEnd(e, index)}
       >
         {card ? <Card card={card} isFaceUp={card.faceUp} /> : <div className="empty-slot"></div>}
       </div>

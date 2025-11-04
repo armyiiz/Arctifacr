@@ -75,8 +75,25 @@ const BattleScreen = ({ stage, onGameOver }) => {
     startNewGame();
   }, [drawCards, stage]);
 
+  const [draggedCard, setDraggedCard] = useState(null);
+
   const handleCardDragStart = (e, card) => {
     e.dataTransfer.setData('cardId', card.id.toString());
+  };
+
+  const handleCardTouchStart = (e, card) => {
+    setDraggedCard(card);
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (e, slotIndex) => {
+    if (draggedCard) {
+      handleCardDrop({ cardId: draggedCard.id }, 'board', slotIndex);
+      setDraggedCard(null);
+    }
   };
 
   const handleCardDrop = (cardInfo, target, slotIndex) => {
@@ -196,14 +213,24 @@ const BattleScreen = ({ stage, onGameOver }) => {
       <div className="enemy-info">
         <h2>{stage.enemy?.name || 'Opponent'} HP: {enemyHP}</h2>
       </div>
-      <Board playerSlots={playerBoard} opponentSlots={enemyBoard} onCardDrop={handleCardDrop} />
+      <Board
+        playerSlots={playerBoard}
+        opponentSlots={enemyBoard}
+        onCardDrop={handleCardDrop}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      />
       <div className="player-info">
         <h2>Player HP: {playerHP}</h2>
       </div>
       <div className="actions">
         <button onClick={handleBattle} disabled={gameState !== 'player_turn' || playerBoard.some(c => c === null)}>Battle!</button>
       </div>
-      <Hand cards={playerHand} onCardDragStart={handleCardDragStart} />
+      <Hand
+        cards={playerHand}
+        onCardDragStart={handleCardDragStart}
+        onCardTouchStart={handleCardTouchStart}
+      />
     </div>
   );
 };
