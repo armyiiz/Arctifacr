@@ -52,7 +52,21 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       const savedDeckConfig = JSON.parse(localStorage.getItem('active_deck'));
       const pDeck = shuffleDeck(createPlayerDeck(savedDeckConfig));
 
-      const eDeck = (stage && stage.deck) ? shuffleDeck([...stage.deck]) : shuffleDeck(createEnemyDeck([ {name: 'Enemy', number: 1, art: 'Enemy', count: 12} ])); // Enemy uses default deck for now
+      // --- Bug Fix #3 & #4 ---
+      // 3. HP ศัตรูต้องมาจาก stage.enemy.level
+      // 4. Deck ศัตรูต้องสร้างจากชื่อของมัน ไม่ใช่ deck เริ่มต้น
+      let eDeck, enemyHP;
+
+      if (stage && stage.enemy) {
+        enemyHP = stage.enemy.level; // HP เท่ากับ Level
+        // สร้าง config สำหรับสร้าง deck จากชื่อศัตรู
+        const enemyCardConfig = [{ name: stage.enemy.name, art: stage.enemy.name, count: 12 }];
+        eDeck = shuffleDeck(createEnemyDeck(enemyCardConfig));
+      } else {
+        // Fallback กรณีไม่มีข้อมูล stage (เช่น test environment)
+        enemyHP = ENEMY_STARTING_HP;
+        eDeck = shuffleDeck(createEnemyDeck([{ name: 'Enemy', art: 'Enemy', count: 12 }]));
+      }
 
       const { drawn: pHand, remainingDeck: pDeckAfter } = drawCards(pDeck, [], STARTING_HAND_SIZE);
       const { drawn: eHand, remainingDeck: eDeckAfter } = drawCards(eDeck, [], STARTING_HAND_SIZE);
@@ -62,7 +76,7 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       setPlayerBoard(Array(BOARD_SIZE).fill(null));
       setPlayerGraveyard([]);
 
-      setAiHP(ENEMY_STARTING_HP);
+      setAiHP(enemyHP); // ใช้ HP ที่คำนวณใหม่
       setAiDeck(eDeckAfter);
       setAiHand(eHand);
       setAiBoard(Array(BOARD_SIZE).fill(null));
@@ -180,20 +194,17 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
     setTimeout(() => endRound(pBoard, eBoard), 1500);
   };
 
-  const endRound = () => {
-    // --- 1. ส่งการ์ดที่ใช้แล้วไปสุสาน (ตาม GDD) ---
-    // (ใช้ .filter(Boolean) เพื่อกรองช่อง 'null' ที่อาจมี)
-    setPlayerGraveyard(prevGraveyard => [...prevGraveyard, ...playerBoard.filter(Boolean)]);
-    setAiGraveyard(prevGraveyard => [...prevGraveyard, ...aiBoard.filter(Boolean)]);
+  const endRound = (pBoard, eBoard) => {
+    // --- 1. รวบรวมการ์ดทั้งหมดที่จะไปสุสาน (State เก่า + การ์ดบนบอร์ด) ---
+    const newPlayerGraveyard = [...playerGraveyard, ...pBoard.filter(Boolean)];
+    const newAiGraveyard = [...aiGraveyard, ...eBoard.filter(Boolean)];
 
-    // --- 2. เคลียร์กระดาน ---
-    setPlayerBoard(Array(BOARD_SIZE).fill(null));
-    setAiBoard(Array(BOARD_SIZE).fill(null));
-
-    // --- 3. คำนวณการ์ดที่จะจั่ว (ตาม GDD) ---
-    // (Logic นี้ถูกต้องแล้วจากรอบที่แล้ว)
-    const pDrawAmount = STARTING_HAND_SIZE - playerHand.length;
-    const eDrawAmount = STARTING_HAND_SIZE - aiHand.length;
+    // --- 2. คำนวณจำนวนการ์ดที่จะจั่ว (ใช้ค่า length ของมือก่อนเล่น) ---
+    // บั๊กข้อที่ 1 อยู่ตรงนี้: เราต้องรู้ว่ามือก่อนหน้านี้มีกี่ใบ
+    const pCardsPlayed = pBoard.filter(Boolean).length;
+    const aiCardsPlayed = eBoard.filter(Boolean).length;
+    const pDrawAmount = pCardsPlayed; // จั่วเท่ากับจำนวนที่เล่นไป
+    const eDrawAmount = aiCardsPlayed;
 
     let newPlayerDeck = [...playerDeck];
     let newAiDeck = [...aiDeck];
@@ -201,27 +212,27 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
     let cardsToDrawForPlayer = [];
     let cardsToDrawForAi = [];
 
-    // --- 4. Logic วนสุสาน (Shuffle) สำหรับผู้เล่น (ตาม GDD) ---
+    // --- 3. Logic วนสุสาน (Shuffle) สำหรับผู้เล่น (ใช้ newPlayerGraveyard ที่อัปเดตแล้ว) ---
     if (newPlayerDeck.length < pDrawAmount) {
-      // ถ้าการ์ดในเด็คไม่พอ...
       console.log("Player deck empty! Reshuffling graveyard...");
-      const shuffledGraveyard = shuffleDeck([...playerGraveyard]);
-      // เอากองสุสานที่สับแล้ว มาต่อท้ายเด็คที่เหลือ
+      const shuffledGraveyard = shuffleDeck(newPlayerGraveyard);
       newPlayerDeck = [...newPlayerDeck, ...shuffledGraveyard];
-      // เคลียร์สุสาน
-      setPlayerGraveyard([]);
+      setPlayerGraveyard([]); // เคลียร์ State สุสานหลังจากเอาไปรวมแล้ว
+    } else {
+      setPlayerGraveyard(newPlayerGraveyard); // อัปเดตสุสานตามปกติ
     }
 
-    // --- 5. Logic วนสุสาน (Shuffle) สำหรับ AI (ตาม GDD) ---
+    // --- 4. Logic วนสุสาน (Shuffle) สำหรับ AI (ใช้ newAiGraveyard ที่อัปเดตแล้ว) ---
     if (newAiDeck.length < eDrawAmount) {
       console.log("AI deck empty! Reshuffling graveyard...");
-      const shuffledGraveyard = shuffleDeck([...aiGraveyard]);
+      const shuffledGraveyard = shuffleDeck(newAiGraveyard);
       newAiDeck = [...newAiDeck, ...shuffledGraveyard];
       setAiGraveyard([]);
+    } else {
+      setAiGraveyard(newAiGraveyard);
     }
 
-    // --- 6. ทำการจั่วการ์ด ---
-    // (ต้องเช็คอีกครั้งว่าหลังวนสุสานแล้วยังการ์ดพอไหม)
+    // --- 5. ทำการจั่วการ์ด ---
     const finalPlayerDraw = Math.min(pDrawAmount, newPlayerDeck.length);
     const finalAiDraw = Math.min(eDrawAmount, newAiDeck.length);
 
@@ -232,11 +243,17 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       cardsToDrawForAi.push(newAiDeck.pop());
     }
 
-    // --- 7. อัปเดต State ---
+    // --- 6. อัปเดต State ที่เหลือ ---
     setPlayerDeck(newPlayerDeck);
     setAiDeck(newAiDeck);
+
+    // อัปเดตมือ: เพิ่มการ์ดที่จั่วใหม่เข้าไป
     setPlayerHand(prevHand => [...prevHand, ...cardsToDrawForPlayer]);
     setAiHand(prevHand => [...prevHand, ...cardsToDrawForAi]);
+
+    // เคลียร์กระดาน
+    setPlayerBoard(Array(BOARD_SIZE).fill(null));
+    setAiBoard(Array(BOARD_SIZE).fill(null));
 
     setGameState('player_turn');
   };
