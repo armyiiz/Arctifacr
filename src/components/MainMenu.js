@@ -1,9 +1,11 @@
 import React from 'react';
+import GoldDisplay from './GoldDisplay';
 import './MainMenu.css';
 
-const MainMenu = ({ onStartGame, onDeckEdit, onCollection, onOptions }) => {
+const MainMenu = ({ onStartGame, onDeckEdit, onCollection, onOptions, playerGold }) => {
   return (
     <div className="main-menu-container">
+      <GoldDisplay gold={playerGold} />
       <h1 className="game-title">Artifact</h1>
       <div className="menu-buttons">
         <button className="menu-button" onClick={onStartGame}>

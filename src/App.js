@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import MainMenu from './components/MainMenu';
 import BossSelectionScreen from './components/BossSelectionScreen';
@@ -14,11 +14,25 @@ import { generateRoute, STAGE_TYPES } from './gameLogic';
 const MAX_HP = 10;
 
 function App() {
+  const [playerGold, setPlayerGold] = useState(0);
   const [currentScreen, setCurrentScreen] = useState('main_menu');
   const [route, setRoute] = useState([]);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
   const [battleResult, setBattleResult] = useState(null);
   const [playerHP, setPlayerHP] = useState(MAX_HP);
+
+  // Load game data from localStorage
+  useEffect(() => {
+    const savedGold = localStorage.getItem('playerGold');
+    if (savedGold) {
+      setPlayerGold(JSON.parse(savedGold));
+    }
+  }, []);
+
+  // Save game data to localStorage
+  useEffect(() => {
+    localStorage.setItem('playerGold', JSON.stringify(playerGold));
+  }, [playerGold]);
 
   const handleStartGame = () => {
     setCurrentScreen('boss_selection');
@@ -97,9 +111,9 @@ function App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'boss_selection':
-        return <BossSelectionScreen onSelectBoss={handleSelectBoss} />;
+        return <BossSelectionScreen onSelectBoss={handleSelectBoss} playerGold={playerGold} />;
       case 'route_selection':
-        return <RouteSelection route={route} currentStageIndex={currentStageIndex} onSelectStage={handleSelectStage} />;
+        return <RouteSelection route={route} currentStageIndex={currentStageIndex} onSelectStage={handleSelectStage} playerGold={playerGold} />;
       case 'battle':
         return <BattleScreen
                   stage={route[currentStageIndex]}
@@ -124,6 +138,7 @@ function App() {
                   onDeckEdit={goToDeckEdit}
                   onCollection={goToCollection}
                   onOptions={() => alert('Options coming soon!')}
+                  playerGold={playerGold}
                 />;
     }
   };
