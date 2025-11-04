@@ -6,7 +6,7 @@ import { createPlayerDeck, createEnemyDeck, shuffleDeck, STAGE_TYPES } from '../
 
 const PLAYER_STARTING_HP = 10;
 const ENEMY_STARTING_HP = 10;
-const STARTING_HAND_SIZE = 5;
+const STARTING_HAND_SIZE = 6;
 const BOARD_SIZE = 4;
 
 const BattleScreen = ({ stage, onGameOver }) => {
@@ -194,8 +194,13 @@ const BattleScreen = ({ stage, onGameOver }) => {
         }
     }
 
-    if (pTotalScore > eTotalScore) setEnemyHP(hp => Math.max(0, hp - (pTotalScore - eTotalScore)));
-    if (eTotalScore > pTotalScore) setPlayerHP(hp => Math.max(0, hp - (eTotalScore - pTotalScore)));
+    // Damage calculation based on new GDD: total winning lanes count as damage
+    if (pTotalScore > eTotalScore) {
+      setEnemyHP(hp => Math.max(0, hp - pTotalScore));
+    }
+    if (eTotalScore > pTotalScore) {
+      setPlayerHP(hp => Math.max(0, hp - eTotalScore));
+    }
 
     setTimeout(() => endRound(pBoard, eBoard), 1500);
   };
@@ -204,8 +209,8 @@ const BattleScreen = ({ stage, onGameOver }) => {
     const newPGrave = [...playerGraveyard, ...pBoard.filter(c => c)];
     const newEGrave = [...enemyGraveyard, ...eBoard.filter(c => c)];
 
-    const pDrawAmount = STARTING_HAND_SIZE - playerHand.length + pBoard.filter(c=>c).length;
-    const eDrawAmount = STARTING_HAND_SIZE - enemyHand.length + eBoard.filter(c=>c).length;
+    const pDrawAmount = STARTING_HAND_SIZE - playerHand.length;
+    const eDrawAmount = STARTING_HAND_SIZE - enemyHand.length;
 
     const { drawn: pDrawn, remainingDeck: pDeck, newGraveyard: pGrave } = drawCards(playerDeck, newPGrave, pDrawAmount);
     const { drawn: eDrawn, remainingDeck: eDeck, newGraveyard: eGrave } = drawCards(enemyDeck, newEGrave, eDrawAmount);
