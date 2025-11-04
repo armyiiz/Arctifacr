@@ -75,26 +75,43 @@ const BattleScreen = ({ stage, onGameOver }) => {
     startNewGame();
   }, [drawCards, stage]);
 
-  const [draggedCard, setDraggedCard] = useState(null);
+  const draggedCardRef = React.useRef(null);
 
   const handleCardDragStart = (e, card) => {
     e.dataTransfer.setData('cardId', card.id.toString());
   };
 
-  const handleCardTouchStart = (e, card) => {
-    setDraggedCard(card);
-  };
-
-  const handleTouchMove = (e) => {
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e, slotIndex) => {
-    if (draggedCard) {
-      handleCardDrop({ cardId: draggedCard.id }, 'board', slotIndex);
-      setDraggedCard(null);
+  const handleGlobalTouchEnd = (e) => {
+    if (draggedCardRef.current) {
+      const touch = e.changedTouches[0];
+      const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+      const slotIndex = dropTarget ? dropTarget.getAttribute('data-slot-index') : null;
+      if (slotIndex !== null) {
+        handleCardDrop({ cardId: draggedCardRef.current.id }, 'board', parseInt(slotIndex, 10));
+      }
+      draggedCardRef.current = null;
     }
   };
+
+  const handleCardTouchStart = (e, card) => {
+    draggedCardRef.current = card;
+  };
+
+  useEffect(() => {
+    const handleTouchMove = (e) => {
+      if (draggedCardRef.current) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('touchend', handleGlobalTouchEnd);
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener('touchend', handleGlobalTouchEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
 
   const handleCardDrop = (cardInfo, target, slotIndex) => {
     if (gameState !== 'player_turn' || !cardInfo.cardId || playerBoard[slotIndex]) return;
@@ -217,8 +234,6 @@ const BattleScreen = ({ stage, onGameOver }) => {
         playerSlots={playerBoard}
         opponentSlots={enemyBoard}
         onCardDrop={handleCardDrop}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       />
       <div className="player-info">
         <h2>Player HP: {playerHP}</h2>
