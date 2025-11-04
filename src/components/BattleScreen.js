@@ -16,20 +16,20 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
   const [playerBoard, setPlayerBoard] = useState(Array(BOARD_SIZE).fill(null));
   const [playerGraveyard, setPlayerGraveyard] = useState([]);
 
-  const [enemyHP, setEnemyHP] = useState(ENEMY_STARTING_HP);
-  const [enemyDeck, setEnemyDeck] = useState([]);
-  const [enemyHand, setEnemyHand] = useState([]);
-  const [enemyBoard, setEnemyBoard] = useState(Array(BOARD_SIZE).fill(null));
-  const [enemyGraveyard, setEnemyGraveyard] = useState([]);
+  const [aiHP, setAiHP] = useState(ENEMY_STARTING_HP);
+  const [aiDeck, setAiDeck] = useState([]);
+  const [aiHand, setAiHand] = useState([]);
+  const [aiBoard, setAiBoard] = useState(Array(BOARD_SIZE).fill(null));
+  const [aiGraveyard, setAiGraveyard] = useState([]);
 
   useEffect(() => {
     if (gameState === 'initializing' || !stage) return;
     if (playerHP <= 0) {
       onGameOver(false);
-    } else if (enemyHP <= 0) {
+    } else if (aiHP <= 0) {
       onGameOver(true);
     }
-  }, [playerHP, enemyHP, onGameOver, gameState, stage]);
+  }, [playerHP, aiHP, onGameOver, gameState, stage]);
 
   const drawCards = useCallback((deck, graveyard, amount) => {
     let currentDeck = [...deck];
@@ -62,11 +62,11 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       setPlayerBoard(Array(BOARD_SIZE).fill(null));
       setPlayerGraveyard([]);
 
-      setEnemyHP(ENEMY_STARTING_HP);
-      setEnemyDeck(eDeckAfter);
-      setEnemyHand(eHand);
-      setEnemyBoard(Array(BOARD_SIZE).fill(null));
-      setEnemyGraveyard([]);
+      setAiHP(ENEMY_STARTING_HP);
+      setAiDeck(eDeckAfter);
+      setAiHand(eHand);
+      setAiBoard(Array(BOARD_SIZE).fill(null));
+      setAiGraveyard([]);
 
       setGameState('player_turn');
     };
@@ -80,25 +80,24 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
   };
 
   const handleSelectBoardSlot = (slotIndex) => {
-    // Condition 1 (วางการ์ด): If a card is selected and the board slot is empty
+    // ทำงานต่อเมื่อ: 1. มีการ์ดเลือกค้างไว้ และ 2. ช่องกระดานนั้นว่าง
     if (selectedCard && playerBoard[slotIndex] === null) {
-        const newHand = playerHand.filter((_, i) => i !== selectedCard.index);
-        const newBoard = [...playerBoard];
-        newBoard[slotIndex] = { ...selectedCard.card, faceUp: false };
 
-        setPlayerHand(newHand);
-        setPlayerBoard(newBoard);
-        setSelectedCard(null);
-    }
-    // Condition 2 (ยกการ์ดคืน): If no card is selected and we click a non-empty slot
-    else if (!selectedCard && playerBoard[slotIndex] !== null) {
-        const cardToReturn = playerBoard[slotIndex];
-        const newHand = [...playerHand, cardToReturn];
-        const newBoard = [...playerBoard];
-        newBoard[slotIndex] = null;
+      // สร้าง "สำเนา" ใหม่ของ State (วิธีที่ถูกต้อง)
+      const newHand = [...playerHand];
+      const newBoard = [...playerBoard];
 
-        setPlayerHand(newHand);
-        setPlayerBoard(newBoard);
+      // ดึงการ์ดออกจาก "สำเนา" ของมือ
+      // .splice() จะแก้ไข newHand และ return การ์ดที่ถูกดึงออกมา
+      const cardToMove = newHand.splice(selectedCard.index, 1)[0];
+
+      // วางการ์ดลงใน "สำเนา" ของกระดาน
+      newBoard[slotIndex] = cardToMove;
+
+      // อัปเดต State ด้วย "สำเนา" ใหม่
+      setPlayerHand(newHand);
+      setPlayerBoard(newBoard);
+      setSelectedCard(null); // ล้างการ์ดที่เลือกค้าง (แก้บั๊ก hover)
     }
   };
 
@@ -106,8 +105,8 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
     if (gameState !== 'player_turn' || playerBoard.some(c => c === null)) return;
     setGameState('resolving');
 
-    const enemyCardsToPlay = enemyHand.slice(0, playerBoard.filter(c => c).length);
-    const newEnemyHand = enemyHand.slice(playerBoard.filter(c => c).length);
+    const enemyCardsToPlay = aiHand.slice(0, playerBoard.filter(c => c).length);
+    const newEnemyHand = aiHand.slice(playerBoard.filter(c => c).length);
     const newEnemyBoard = Array(BOARD_SIZE).fill(null);
     let playIndex = 0;
     for(let i=0; i < BOARD_SIZE; i++){
@@ -116,14 +115,14 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
             playIndex++;
         }
     }
-    setEnemyHand(newEnemyHand);
-    setEnemyBoard(newEnemyBoard);
+    setAiHand(newEnemyHand);
+    setAiBoard(newEnemyBoard);
 
     setTimeout(() => {
       const revealedPBoard = playerBoard.map(c => c ? { ...c, faceUp: true } : null);
       const revealedEBoard = newEnemyBoard.map(c => c ? { ...c, faceUp: true } : null);
       setPlayerBoard(revealedPBoard);
-      setEnemyBoard(revealedEBoard);
+      setAiBoard(revealedEBoard);
       setTimeout(() => calculateCombat(revealedPBoard, revealedEBoard), 1000);
     }, 500);
   };
@@ -172,7 +171,7 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
 
     // Damage calculation based on new GDD: total winning lanes count as damage
     if (pTotalScore > eTotalScore) {
-      setEnemyHP(hp => Math.max(0, hp - pTotalScore));
+      setAiHP(hp => Math.max(0, hp - pTotalScore));
     }
     if (eTotalScore > pTotalScore) {
       setPlayerHP(hp => Math.max(0, hp - eTotalScore));
@@ -181,48 +180,77 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
     setTimeout(() => endRound(pBoard, eBoard), 1500);
   };
 
-  const endRound = (pBoard, eBoard) => {
-    // Move used cards to graveyard
-    const newPGrave = [...playerGraveyard, ...pBoard.filter(c => c)];
-    const newEGrave = [...enemyGraveyard, ...eBoard.filter(c => c)];
+  const endRound = () => {
+    // --- 1. ส่งการ์ดที่ใช้แล้วไปสุสาน (ตาม GDD) ---
+    // (ใช้ .filter(Boolean) เพื่อกรองช่อง 'null' ที่อาจมี)
+    setPlayerGraveyard(prevGraveyard => [...prevGraveyard, ...playerBoard.filter(Boolean)]);
+    setAiGraveyard(prevGraveyard => [...prevGraveyard, ...aiBoard.filter(Boolean)]);
 
-    // Correctly calculate the number of cards to draw
-    const pCardsToDraw = STARTING_HAND_SIZE - (playerHand.length - pBoard.filter(c => c).length);
-    const eCardsToDraw = STARTING_HAND_SIZE - (enemyHand.length - eBoard.filter(c => c).length);
-
-    // After playing cards, the hand is smaller. Let's reflect that before drawing.
-    const newPlayerHand = playerHand.filter(card => !pBoard.some(pCard => pCard && pCard.id === card.id));
-    const newEnemyHand = enemyHand.filter(card => !eBoard.some(eCard => eCard && eCard.id === card.id));
-
-    // Draw new cards
-    const { drawn: pDrawn, remainingDeck: pDeck, newGraveyard: pGraveFromShuffle } = drawCards(playerDeck, newPGrave, pCardsToDraw);
-    const { drawn: eDrawn, remainingDeck: eDeck, newGraveyard: eGraveFromShuffle } = drawCards(enemyDeck, newEGrave, eCardsToDraw);
-
-    // Update state
-    setPlayerDeck(pDeck);
-    setPlayerHand([...newPlayerHand, ...pDrawn]); // Combine remaining hand with new cards
-    setPlayerGraveyard(pGraveFromShuffle.length > 0 ? pGraveFromShuffle : newPGrave);
-
-    setEnemyDeck(eDeck);
-    setEnemyHand([...newEnemyHand, ...eDrawn]);
-    setEnemyGraveyard(eGraveFromShuffle.length > 0 ? eGraveFromShuffle : newEGrave);
-
-    // Reset board
+    // --- 2. เคลียร์กระดาน ---
     setPlayerBoard(Array(BOARD_SIZE).fill(null));
-    setEnemyBoard(Array(BOARD_SIZE).fill(null));
+    setAiBoard(Array(BOARD_SIZE).fill(null));
+
+    // --- 3. คำนวณการ์ดที่จะจั่ว (ตาม GDD) ---
+    // (Logic นี้ถูกต้องแล้วจากรอบที่แล้ว)
+    const pDrawAmount = STARTING_HAND_SIZE - playerHand.length;
+    const eDrawAmount = STARTING_HAND_SIZE - aiHand.length;
+
+    let newPlayerDeck = [...playerDeck];
+    let newAiDeck = [...aiDeck];
+
+    let cardsToDrawForPlayer = [];
+    let cardsToDrawForAi = [];
+
+    // --- 4. Logic วนสุสาน (Shuffle) สำหรับผู้เล่น (ตาม GDD) ---
+    if (newPlayerDeck.length < pDrawAmount) {
+      // ถ้าการ์ดในเด็คไม่พอ...
+      console.log("Player deck empty! Reshuffling graveyard...");
+      const shuffledGraveyard = shuffleDeck([...playerGraveyard]);
+      // เอากองสุสานที่สับแล้ว มาต่อท้ายเด็คที่เหลือ
+      newPlayerDeck = [...newPlayerDeck, ...shuffledGraveyard];
+      // เคลียร์สุสาน
+      setPlayerGraveyard([]);
+    }
+
+    // --- 5. Logic วนสุสาน (Shuffle) สำหรับ AI (ตาม GDD) ---
+    if (newAiDeck.length < eDrawAmount) {
+      console.log("AI deck empty! Reshuffling graveyard...");
+      const shuffledGraveyard = shuffleDeck([...aiGraveyard]);
+      newAiDeck = [...newAiDeck, ...shuffledGraveyard];
+      setAiGraveyard([]);
+    }
+
+    // --- 6. ทำการจั่วการ์ด ---
+    // (ต้องเช็คอีกครั้งว่าหลังวนสุสานแล้วยังการ์ดพอไหม)
+    const finalPlayerDraw = Math.min(pDrawAmount, newPlayerDeck.length);
+    const finalAiDraw = Math.min(eDrawAmount, newAiDeck.length);
+
+    for (let i = 0; i < finalPlayerDraw; i++) {
+      cardsToDrawForPlayer.push(newPlayerDeck.pop());
+    }
+    for (let i = 0; i < finalAiDraw; i++) {
+      cardsToDrawForAi.push(newAiDeck.pop());
+    }
+
+    // --- 7. อัปเดต State ---
+    setPlayerDeck(newPlayerDeck);
+    setAiDeck(newAiDeck);
+    setPlayerHand(prevHand => [...prevHand, ...cardsToDrawForPlayer]);
+    setAiHand(prevHand => [...prevHand, ...cardsToDrawForAi]);
+
     setGameState('player_turn');
-};
+  };
 
   if (!stage) return <div>Loading...</div>;
 
   return (
     <div className="battle-screen">
       <div className="enemy-info">
-        <h2>{stage.enemy?.name || 'Opponent'} HP: {enemyHP}</h2>
+        <h2>{stage.enemy?.name || 'Opponent'} HP: {aiHP}</h2>
       </div>
       <Board
         playerSlots={playerBoard}
-        opponentSlots={enemyBoard}
+        opponentSlots={aiBoard}
         onSelectSlot={handleSelectBoardSlot}
       />
       <div className="player-info">
