@@ -1,12 +1,12 @@
 // src/gameLogic.js
-import { ENEMIES, ENEMY_DECKS } from './storyData.js';
+import { ENEMIES, ENEMY_DECKS, storyChapter } from './storyData.js';
+
 
 // Define stage types and their content
 export const STAGE_TYPES = {
   BATTLE: 'BATTLE',
-  ELITE_BATTLE: 'ELITE_BATTLE',
   TREASURE: 'TREASURE',
-  SHOP: 'SHOP',
+  REST: 'REST',
   BOSS: 'BOSS',
 };
 
@@ -29,31 +29,21 @@ const UNIQUE_CARDS = [
 
 // Function to get a list of all unique cards, used for collection, deck building, etc.
 export const getAllCards = () => {
-    // In the future, this could be more complex, but for now, we just return the master list.
-    // We map it to assign a 'current' number, which might be modified by in-game effects.
     return UNIQUE_CARDS.map(card => ({ ...card, number: card.baseNumber }));
 };
 
 
 /**
  * Creates a standard 12-card player deck based on the game rules.
- * This function will be expanded to use the player's customized deck.
  */
 export const createPlayerDeck = (customDeck) => {
   if (customDeck) {
-    // Logic to build deck from player's saved configuration
     return customDeck.map((cardName, index) => {
       const cardTemplate = UNIQUE_CARDS.find(c => c.name === cardName);
       return { ...cardTemplate, id: `p${index}`, number: cardTemplate.baseNumber };
     });
   }
 
-  // Default starter deck if no custom deck is provided
-  const starterDeckComposition = { 'Traveler': 12 }; // Should be more specific based on numbers
-  const deck = [];
-  let cardIdCounter = 0;
-
-  // This logic needs to be updated to match the 3x1, 2x2, etc. rule
   const defaultDeckConfig = [
       { name: 'Traveler', number: 1, count: 3 },
       { name: 'Traveler', number: 2, count: 2 },
@@ -66,6 +56,8 @@ export const createPlayerDeck = (customDeck) => {
       { name: 'Traveler', number: 9, count: 1 },
   ];
 
+  const deck = [];
+  let cardIdCounter = 0;
   defaultDeckConfig.forEach(config => {
       for (let i = 0; i < config.count; i++) {
           const cardTemplate = UNIQUE_CARDS.find(c => c.name === config.name && c.baseNumber === config.number);
@@ -79,20 +71,27 @@ export const createPlayerDeck = (customDeck) => {
   return deck;
 };
 
-export const createEnemyDeck = (deckConfig) => {
-  const deck = [];
-  let idCounter = 0;
-  deckConfig.forEach(cardInfo => {
-    for (let i = 0; i < cardInfo.count; i++) {
-      deck.push({
-        id: `e${idCounter++}`,
-        name: cardInfo.name,
-        number: cardInfo.number,
-        art: cardInfo.art,
-      });
-    }
-  });
-  return deck;
+export const createEnemyDeck = (enemy) => {
+    const deck = [];
+    const baseDeck = [
+        { number: 1, count: 3 }, { number: 2, count: 2 }, { number: 3, count: 1 },
+        { number: 4, count: 1 }, { number: 5, count: 1 }, { number: 6, count: 1 },
+        { number: 7, count: 1 }, { number: 8, count: 1 }, { number: 9, count: 1 },
+    ];
+
+    let idCounter = 0;
+    baseDeck.forEach(cardDef => {
+        for (let i = 0; i < cardDef.count; i++) {
+            deck.push({
+                id: `e${idCounter++}`,
+                name: enemy.name,
+                number: cardDef.number,
+                art: enemy.name,
+            });
+        }
+    });
+
+    return deck;
 };
 
 // ... (shuffleDeck logic remains the same)
@@ -106,42 +105,71 @@ export const shuffleDeck = (deck) => {
 };
 
 // --- Story Mode Logic ---
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-// Pools of encounters for different parts of the route
-export const STAGE_POOLS = {
-  EARLY: [
-    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.GOBLIN, deck: ENEMY_DECKS.EASY_DECK },
-    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.GOBLIN, deck: ENEMY_DECKS.EASY_DECK },
-    { type: STAGE_TYPES.TREASURE },
-    { type: STAGE_TYPES.SHOP },
-  ],
-  MID: [
-    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.ORC, deck: ENEMY_DECKS.MEDIUM_DECK },
-    { type: STAGE_TYPES.ELITE_BATTLE, enemy: ENEMIES.MAGE, deck: ENEMY_DECKS.MEDIUM_DECK },
-    { type: STAGE_TYPES.TREASURE },
-    { type: STAGE_TYPES.SHOP },
-  ],
-  FINAL: [
-    { type: STAGE_TYPES.BOSS, enemy: ENEMIES.BOSS_KNIGHT, deck: ENEMY_DECKS.BOSS_DECK },
-  ]
-};
+const createBattleStage = (enemy, level) => ({
+    type: STAGE_TYPES.BATTLE,
+    enemy: { ...enemy, hp: level, level: level },
+    deck: createEnemyDeck(enemy),
+});
 
+export const generateRoute = (bossId) => {
+    const chapter = storyChapter[bossId];
+    if (!chapter) {
+        console.error("Invalid bossId:", bossId);
+        return [];
+    }
 
-/**
- * Generates a random route for the story mode.
- * A route consists of 11 stages.
- */
-export const generateRoute = () => {
-  const route = [];
-  const getRandomFromPool = (pool) => pool[Math.floor(Math.random() * pool.length)];
+    const route = [];
+    let restStopUsed = false;
+    let treasureCount = 0;
 
-  for (let i = 0; i < 5; i++) {
-    route.push(getRandomFromPool(STAGE_POOLS.EARLY));
-  }
-  for (let i = 0; i < 5; i++) {
-    route.push(getRandomFromPool(STAGE_POOLS.MID));
-  }
-  route.push(STAGE_POOLS.FINAL[0]);
+    // Stage 1: Regular monster
+    route.push(createBattleStage(chapter.monsters[0], getRandomInt(1, 3)));
 
-  return route.map((stage, index) => ({ ...stage, id: `stage_${index}` }));
+    const stagePools = {
+        2: [createBattleStage(chapter.monsters[0], getRandomInt(2, 3)), { type: STAGE_TYPES.TREASURE }],
+        3: [createBattleStage(chapter.monsters[0], getRandomInt(2, 3)), { type: STAGE_TYPES.TREASURE }, { type: STAGE_TYPES.REST, fullHeal: false }],
+        4: [createBattleStage(chapter.monsters[1], getRandomInt(3, 4)), { type: STAGE_TYPES.TREASURE }, { type: STAGE_TYPES.REST, fullHeal: false }],
+        5: [createBattleStage(chapter.monsters[1], getRandomInt(3, 4)), { type: STAGE_TYPES.TREASURE }, { type: STAGE_TYPES.REST, fullHeal: false }],
+        6: [createBattleStage(chapter.monsters[1], getRandomInt(4, 5)), { type: STAGE_TYPES.TREASURE }, { type: STAGE_TYPES.REST, fullHeal: false }],
+        7: [createBattleStage(chapter.monsters[2], getRandomInt(4, 5)), { type: STAGE_TYPES.TREASURE }, { type: STAGE_TYPES.REST, fullHeal: false }],
+        8: [createBattleStage(chapter.monsters[2], getRandomInt(5, 7)), { type: STAGE_TYPES.TREASURE }, { type: STAGE_TYPES.REST, fullHeal: false }],
+    };
+
+    for (let i = 2; i <= 8; i++) {
+        let possibleStages = [...stagePools[i]];
+
+        // Filter out rest stops if one has already been used
+        if (restStopUsed) {
+            possibleStages = possibleStages.filter(s => s.type !== STAGE_TYPES.REST);
+        }
+
+        // Filter out treasure if 2 have been found, or if the previous stage was treasure
+        if (treasureCount >= 2 || (route.length > 0 && route[route.length - 1].type === STAGE_TYPES.TREASURE)) {
+            possibleStages = possibleStages.filter(s => s.type !== STAGE_TYPES.TREASURE);
+        }
+
+        const stage = possibleStages[Math.floor(Math.random() * possibleStages.length)];
+
+        if (stage.type === STAGE_TYPES.REST) restStopUsed = true;
+        if (stage.type === STAGE_TYPES.TREASURE) treasureCount++;
+
+        route.push(stage);
+    }
+
+    // Stage 9: Mini-boss
+    route.push(createBattleStage(chapter.miniBoss, getRandomInt(8, 10)));
+
+    // Stage 10: Full Rest
+    route.push({ type: STAGE_TYPES.REST, fullHeal: true });
+
+    // Stage 11: Boss
+    route.push({
+        type: STAGE_TYPES.BOSS,
+        enemy: { ...chapter.boss, hp: 15, level: 15 },
+        deck: createEnemyDeck(chapter.boss),
+    });
+
+    return route.map((stage, index) => ({ ...stage, id: `stage_${index}` }));
 };
