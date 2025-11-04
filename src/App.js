@@ -13,9 +13,17 @@ import { generateRoute, STAGE_TYPES } from './gameLogic';
 
 const MAX_HP = 10;
 
+const initialPlayerCollection = {
+  'T01': 3, 'T02': 2, 'T03': 1, 'T04': 1, 'T05': 1,
+  'T06': 1, 'T07': 1, 'T08': 1, 'T09': 1,
+};
+
 const loadInitialState = (key, defaultValue) => {
   try {
     const savedItem = localStorage.getItem(key);
+    if (key === 'playerCollection' && !savedItem) {
+      return defaultValue;
+    }
     return savedItem ? JSON.parse(savedItem) : defaultValue;
   } catch (error) {
     console.error(`Error loading ${key} from localStorage`, error);
@@ -26,7 +34,7 @@ const loadInitialState = (key, defaultValue) => {
 function App() {
   const [playerGold, setPlayerGold] = useState(() => loadInitialState('playerGold', 0));
   const [playerArtifacts, setPlayerArtifacts] = useState(() => loadInitialState('playerArtifacts', []));
-  const [playerCollection, setPlayerCollection] = useState(() => loadInitialState('playerCollection', { 'Traveler': 12 }));
+  const [playerCollection, setPlayerCollection] = useState(() => loadInitialState('playerCollection', initialPlayerCollection));
   const [currentScreen, setCurrentScreen] = useState('main_menu');
   const [route, setRoute] = useState([]);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
