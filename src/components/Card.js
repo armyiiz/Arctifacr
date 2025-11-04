@@ -1,7 +1,7 @@
 import React from 'react';
 import './Card.css';
 
-const Card = ({ card, isFaceUp, onClick, onDragStart, onTouchStart }) => {
+const Card = ({ card, isFaceUp, onClick, className }) => {
   const cardContent = isFaceUp ? (
     <div className="card-face card-front">
       <div className="card-art" style={{ backgroundImage: `url(/art/cards/${card.art}.png)` }}></div>
@@ -12,16 +12,11 @@ const Card = ({ card, isFaceUp, onClick, onDragStart, onTouchStart }) => {
     <div className="card-face card-back"></div>
   );
 
-  const isDraggable = onDragStart || onTouchStart;
-
   return (
     <div
-      className={`card-container ${isFaceUp ? 'flipped' : ''}`}
+      className={`card-container ${isFaceUp ? 'flipped' : ''} ${className || ''}`}
       onClick={onClick}
-      draggable={isDraggable}
-      onDragStart={onDragStart}
-      onTouchStart={onTouchStart}
-      data-card-id={card.id}
+      data-card-id={card ? card.id : ''}
     >
       <div className="card-inner">
         {cardContent}

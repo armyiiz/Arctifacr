@@ -5,3 +5,8 @@
   padding: 10px;
   min-height: 160px; /* Ensure it has a consistent height */
 }
+
+.hand-container .card-container.selected {
+  transform: translateY(-20px) scale(1.05);
+  box-shadow: 0 0 15px yellow;
+}
