@@ -60,8 +60,8 @@ const DeckEditScreen = ({ onBack }) => {
     }
   };
 
-  const handleRemoveFromDeck = (cardToRemove) => {
-    const newDeck = deck.filter((card, index) => index !== deck.findIndex(c => c.id === cardToRemove.id));
+  const handleRemoveFromDeck = (cardToRemove, indexToRemove) => {
+    const newDeck = deck.filter((card, index) => index !== indexToRemove);
     setDeck(newDeck);
   };
 
@@ -96,7 +96,7 @@ const DeckEditScreen = ({ onBack }) => {
           <input type="text" value={deckName} onChange={(e) => setDeckName(e.target.value)} className="deck-name-input" />
           <div className="deck-grid">
             {deck.map((card, index) => (
-              <div key={index} className="deck-card-item" onClick={() => handleRemoveFromDeck(card)}>
+              <div key={index} className="deck-card-item" onClick={() => handleRemoveFromDeck(card, index)}>
                 <Card card={card} isFaceUp={true} />
               </div>
             ))}

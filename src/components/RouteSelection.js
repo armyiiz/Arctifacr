@@ -1,6 +1,6 @@
 import React from 'react';
 import './RouteSelection.css';
-import { STAGE_TYPES } from '../storyData';
+import { STAGE_TYPES } from '../gameLogic';
 
 const getStageIcon = (type) => {
   switch (type) {
