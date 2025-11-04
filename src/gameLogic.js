@@ -1,4 +1,5 @@
 // src/gameLogic.js
+import { ENEMIES, ENEMY_DECKS } from './storyData.js';
 
 // Define stage types and their content
 export const STAGE_TYPES = {
@@ -105,7 +106,6 @@ export const shuffleDeck = (deck) => {
 };
 
 // --- Story Mode Logic ---
-import { ENEMIES, ENEMY_DECKS } from './storyData.js';
 
 // Pools of encounters for different parts of the route
 export const STAGE_POOLS = {
