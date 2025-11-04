@@ -1,68 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './DeckEditScreen.css';
 import Card from './Card';
 import { getAllCards } from '../gameLogic';
 
+const DECK_SLOTS = 10;
+
 const DeckEditScreen = ({ onBack }) => {
   const [collection, setCollection] = useState({});
-  const [deck, setDeck] = useState([]);
-  const [deckName, setDeckName] = useState('My Deck');
+  const [allDecks, setAllDecks] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(0);
 
+  // State for the currently displayed deck and its name
+  const [currentDeck, setCurrentDeck] = useState([]);
+  const [currentDeckName, setCurrentDeckName] = useState('');
+
+  // --- Initial Loading Effect ---
   useEffect(() => {
-    // Load collection from localStorage
+    // Load collection
     const savedCollection = JSON.parse(localStorage.getItem('card_collection')) || {};
     setCollection(savedCollection);
 
-    // Load active deck from localStorage
-    const savedDeck = JSON.parse(localStorage.getItem('active_deck'));
-    if (savedDeck) {
-      setDeck(savedDeck);
+    // Load all decks or create default structure
+    const savedDecks = JSON.parse(localStorage.getItem('all_decks'));
+    if (savedDecks && savedDecks.length === DECK_SLOTS) {
+      setAllDecks(savedDecks);
     } else {
-      // Create a default deck if none is saved
-      const defaultDeck = [
-        // ... default card objects would go here
-      ];
-      setDeck(defaultDeck);
+      const defaultDecks = Array.from({ length: DECK_SLOTS }, (_, i) => ({
+        name: `Deck ${i + 1}`,
+        cards: [],
+      }));
+      setAllDecks(defaultDecks);
     }
   }, []);
 
+  // --- Effect to update UI when selected slot changes ---
+  useEffect(() => {
+    if (allDecks.length > 0) {
+      const selected = allDecks[selectedSlot];
+      setCurrentDeck(selected.cards || []);
+      setCurrentDeckName(selected.name || `Deck ${selectedSlot + 1}`);
+    }
+  }, [selectedSlot, allDecks]);
+
   const handleSaveDeck = () => {
-    if (deck.length !== 12) {
+    if (currentDeck.length !== 12) {
       alert('A deck must contain exactly 12 cards.');
       return;
     }
-    // In a real implementation, we would also validate the card composition rule
-    localStorage.setItem('active_deck', JSON.stringify(deck));
-    alert(`${deckName} saved!`);
+
+    const updatedDecks = [...allDecks];
+    updatedDecks[selectedSlot] = { name: currentDeckName, cards: currentDeck };
+
+    setAllDecks(updatedDecks);
+    localStorage.setItem('all_decks', JSON.stringify(updatedDecks));
+
+    // Also save the current deck as the "active" one for the battle screen to use
+    localStorage.setItem('active_deck', JSON.stringify(currentDeck));
+
+    alert(`'${currentDeckName}' saved successfully in Slot ${selectedSlot + 1}!`);
   };
 
   const allCards = getAllCards();
 
-  // Drag and Drop Handlers
+  // --- Drag and Drop Handlers ---
   const handleDragStart = (e, card) => {
     e.dataTransfer.setData('card', JSON.stringify(card));
   };
 
   const handleDropOnDeck = (e) => {
     e.preventDefault();
-    if (deck.length >= 12) return;
+    if (currentDeck.length >= 12) return;
 
     const cardData = JSON.parse(e.dataTransfer.getData('card'));
-    const cardName = cardData.name;
-
-    const collectionCount = collection[cardName] || 0;
-    const deckCount = deck.filter(c => c.name === cardName).length;
+    const collectionCount = collection[cardData.name] || 0;
+    const deckCount = currentDeck.filter(c => c.name === cardData.name).length;
 
     if (collectionCount > deckCount) {
-      setDeck([...deck, cardData]);
+      setCurrentDeck([...currentDeck, cardData]);
     } else {
-      alert(`You don't have any more "${cardName}" cards in your collection.`);
+      alert(`You don't have any more "${cardData.name}" cards in your collection.`);
     }
   };
 
-  const handleRemoveFromDeck = (cardToRemove, indexToRemove) => {
-    const newDeck = deck.filter((card, index) => index !== indexToRemove);
-    setDeck(newDeck);
+  const handleRemoveFromDeck = (indexToRemove) => {
+    setCurrentDeck(currentDeck.filter((_, index) => index !== indexToRemove));
   };
 
   const handleDragOver = (e) => {
@@ -71,14 +92,34 @@ const DeckEditScreen = ({ onBack }) => {
 
   return (
     <div className="deck-edit-screen">
-      <h1 className="deck-edit-title">Deck Edit</h1>
+      <h1 className="deck-edit-title">Deck Editor</h1>
+      <div className="deck-management">
+        <label htmlFor="deck-slot-selector">Deck Slot:</label>
+        <select
+          id="deck-slot-selector"
+          value={selectedSlot}
+          onChange={(e) => setSelectedSlot(Number(e.target.value))}
+        >
+          {allDecks.map((deck, index) => (
+            <option key={index} value={index}>
+              {index + 1}. {deck.name}
+            </option>
+          ))}
+        </select>
+        <input
+          type="text"
+          value={currentDeckName}
+          onChange={(e) => setCurrentDeckName(e.target.value)}
+          className="deck-name-input"
+        />
+      </div>
       <div className="deck-editor-layout">
         <div className="collection-panel">
           <h2>Your Collection</h2>
           <div className="collection-grid-dedit">
             {allCards.map(card => {
               const collectionCount = collection[card.name] || 0;
-              const deckCount = deck.filter(c => c.name === card.name).length;
+              const deckCount = currentDeck.filter(c => c.name === card.name).length;
               const availableCount = collectionCount - deckCount;
               if (availableCount <= 0) return null;
 
@@ -92,11 +133,10 @@ const DeckEditScreen = ({ onBack }) => {
           </div>
         </div>
         <div className="deck-panel" onDrop={handleDropOnDeck} onDragOver={handleDragOver}>
-          <h2>Current Deck ({deck.length}/12)</h2>
-          <input type="text" value={deckName} onChange={(e) => setDeckName(e.target.value)} className="deck-name-input" />
+          <h2>Current Deck ({currentDeck.length}/12)</h2>
           <div className="deck-grid">
-            {deck.map((card, index) => (
-              <div key={index} className="deck-card-item" onClick={() => handleRemoveFromDeck(card, index)}>
+            {currentDeck.map((card, index) => (
+              <div key={index} className="deck-card-item" onClick={() => handleRemoveFromDeck(index)}>
                 <Card card={card} isFaceUp={true} />
               </div>
             ))}

@@ -204,27 +204,36 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
   };
 
   const endRound = (pBoard, eBoard) => {
+    // Move used cards to graveyard
     const newPGrave = [...playerGraveyard, ...pBoard.filter(c => c)];
     const newEGrave = [...enemyGraveyard, ...eBoard.filter(c => c)];
 
-    const pDrawAmount = STARTING_HAND_SIZE - playerHand.length;
-    const eDrawAmount = STARTING_HAND_SIZE - enemyHand.length;
+    // Correctly calculate the number of cards to draw
+    const pCardsToDraw = STARTING_HAND_SIZE - (playerHand.length - pBoard.filter(c => c).length);
+    const eCardsToDraw = STARTING_HAND_SIZE - (enemyHand.length - eBoard.filter(c => c).length);
 
-    const { drawn: pDrawn, remainingDeck: pDeck, newGraveyard: pGrave } = drawCards(playerDeck, newPGrave, pDrawAmount);
-    const { drawn: eDrawn, remainingDeck: eDeck, newGraveyard: eGrave } = drawCards(enemyDeck, newEGrave, eDrawAmount);
+    // After playing cards, the hand is smaller. Let's reflect that before drawing.
+    const newPlayerHand = playerHand.filter(card => !pBoard.some(pCard => pCard && pCard.id === card.id));
+    const newEnemyHand = enemyHand.filter(card => !eBoard.some(eCard => eCard && eCard.id === card.id));
 
+    // Draw new cards
+    const { drawn: pDrawn, remainingDeck: pDeck, newGraveyard: pGraveFromShuffle } = drawCards(playerDeck, newPGrave, pCardsToDraw);
+    const { drawn: eDrawn, remainingDeck: eDeck, newGraveyard: eGraveFromShuffle } = drawCards(enemyDeck, newEGrave, eCardsToDraw);
+
+    // Update state
     setPlayerDeck(pDeck);
-    setPlayerHand(pDrawn);
-    setPlayerGraveyard(pGrave);
+    setPlayerHand([...newPlayerHand, ...pDrawn]); // Combine remaining hand with new cards
+    setPlayerGraveyard(pGraveFromShuffle.length > 0 ? pGraveFromShuffle : newPGrave);
 
     setEnemyDeck(eDeck);
-    setEnemyHand(eDrawn);
-    setEnemyGraveyard(eGrave);
+    setEnemyHand([...newEnemyHand, ...eDrawn]);
+    setEnemyGraveyard(eGraveFromShuffle.length > 0 ? eGraveFromShuffle : newEGrave);
 
+    // Reset board
     setPlayerBoard(Array(BOARD_SIZE).fill(null));
     setEnemyBoard(Array(BOARD_SIZE).fill(null));
     setGameState('player_turn');
-  };
+};
 
   if (!stage) return <div>Loading...</div>;
 
