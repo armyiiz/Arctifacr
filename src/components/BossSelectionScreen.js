@@ -1,4 +1,5 @@
 import React from 'react';
+import GoldDisplay from './GoldDisplay';
 import './BossSelectionScreen.css';
 
 const bosses = [
@@ -13,9 +14,10 @@ const bosses = [
   { id: 'specter', name: 'Specter' },
 ];
 
-const BossSelectionScreen = ({ onSelectBoss }) => {
+const BossSelectionScreen = ({ onSelectBoss, playerGold }) => {
   return (
     <div className="boss-selection-screen">
+      <GoldDisplay gold={playerGold} />
       <h1>Select Your Route</h1>
       <div className="boss-list">
         {bosses.map(boss => (
