@@ -37,6 +37,7 @@
   padding: 10px;
   box-sizing: border-box;
   transform: rotateY(180deg);
+  position: relative; /* Added for positioning context */
 }
 
 .card-back {
@@ -44,13 +45,28 @@
   background-image: repeating-radial-gradient( circle at 0 0, transparent 0, #6a0dad 10px ), repeating-linear-gradient( #8a2be2, #8a2be2 );
 }
 
-.card-number {
-  font-size: 24px;
-  font-weight: bold;
+.card-number-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 25px; /* Adjust size as needed */
+  height: 25px; /* Adjust size as needed */
+  z-index: 1; /* Ensure it's on top of other elements */
 }
 
 .card-art {
   width: 80%;
   height: 60%;
   background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-name {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 2px 0;
 }

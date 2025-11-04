@@ -5,7 +5,7 @@ const Card = ({ card, isFaceUp, onClick, onDragStart, onTouchStart }) => {
   const cardContent = isFaceUp ? (
     <div className="card-face card-front">
       <div className="card-art" style={{ backgroundImage: `url(/art/cards/${card.art}.png)` }}></div>
-      <div className="card-number">{card.number}</div>
+      <img src={`/art/icons/Num_${card.number}.png`} alt={`Number ${card.number}`} className="card-number-icon" />
       <div className="card-name">{card.name}</div>
     </div>
   ) : (
