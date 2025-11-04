@@ -5,9 +5,8 @@ import { STAGE_TYPES } from '../gameLogic';
 const getStageIcon = (type) => {
   switch (type) {
     case STAGE_TYPES.BATTLE: return '⚔️';
-    case STAGE_TYPES.ELITE_BATTLE: return '💀';
     case STAGE_TYPES.TREASURE: return '💎';
-    case STAGE_TYPES.SHOP: return '💰';
+    case STAGE_TYPES.REST: return '🔥';
     case STAGE_TYPES.BOSS: return '👑';
     default: return '?';
   }
@@ -17,6 +16,7 @@ const RouteSelection = ({ route, currentStageIndex, onSelectStage }) => {
   return (
     <div className="route-selection-container">
       <h1 className="route-title">Choose Your Next Encounter</h1>
+      <h2 className="stage-counter">Stage: {currentStageIndex + 1} / {route.length}</h2>
       <div className="route-map">
         {route.map((stage, index) => {
           const isCurrent = index === currentStageIndex;

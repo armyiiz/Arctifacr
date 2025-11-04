@@ -9,9 +9,8 @@ const ENEMY_STARTING_HP = 10;
 const STARTING_HAND_SIZE = 6;
 const BOARD_SIZE = 4;
 
-const BattleScreen = ({ stage, onGameOver }) => {
+const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
   const [gameState, setGameState] = useState('initializing');
-  const [playerHP, setPlayerHP] = useState(PLAYER_STARTING_HP);
   const [playerDeck, setPlayerDeck] = useState([]);
   const [playerHand, setPlayerHand] = useState([]);
   const [playerBoard, setPlayerBoard] = useState(Array(BOARD_SIZE).fill(null));
@@ -58,7 +57,6 @@ const BattleScreen = ({ stage, onGameOver }) => {
       const { drawn: pHand, remainingDeck: pDeckAfter } = drawCards(pDeck, [], STARTING_HAND_SIZE);
       const { drawn: eHand, remainingDeck: eDeckAfter } = drawCards(eDeck, [], STARTING_HAND_SIZE);
 
-      setPlayerHP(PLAYER_STARTING_HP);
       setPlayerDeck(pDeckAfter);
       setPlayerHand(pHand);
       setPlayerBoard(Array(BOARD_SIZE).fill(null));
