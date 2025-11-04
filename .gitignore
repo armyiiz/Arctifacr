@@ -15,6 +15,8 @@
 .DS_Store
 .env.local
 .env.development.local
+react_scripts_output.log
+start-dev.sh
 .env.test.local
 .env.production.local
 
