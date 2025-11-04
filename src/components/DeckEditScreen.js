@@ -5,8 +5,7 @@ import { getAllCards } from '../gameLogic';
 
 const DECK_SLOTS = 10;
 
-const DeckEditScreen = ({ onBack }) => {
-  const [collection, setCollection] = useState({});
+const DeckEditScreen = ({ onBack, playerCollection }) => {
   const [allDecks, setAllDecks] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(0);
 
@@ -16,10 +15,6 @@ const DeckEditScreen = ({ onBack }) => {
 
   // --- Initial Loading Effect ---
   useEffect(() => {
-    // Load collection
-    const savedCollection = JSON.parse(localStorage.getItem('card_collection')) || {};
-    setCollection(savedCollection);
-
     // Load all decks or create default structure
     const savedDecks = JSON.parse(localStorage.getItem('all_decks'));
     if (savedDecks && savedDecks.length === DECK_SLOTS) {
@@ -72,7 +67,7 @@ const DeckEditScreen = ({ onBack }) => {
     if (currentDeck.length >= 12) return;
 
     const cardData = JSON.parse(e.dataTransfer.getData('card'));
-    const collectionCount = collection[cardData.name] || 0;
+    const collectionCount = playerCollection[cardData.name] || 0;
     const deckCount = currentDeck.filter(c => c.name === cardData.name).length;
 
     if (collectionCount > deckCount) {
@@ -118,7 +113,7 @@ const DeckEditScreen = ({ onBack }) => {
           <h2>Your Collection</h2>
           <div className="collection-grid-dedit">
             {allCards.map(card => {
-              const collectionCount = collection[card.name] || 0;
+              const collectionCount = playerCollection[card.name] || 0;
               const deckCount = currentDeck.filter(c => c.name === card.name).length;
               const availableCount = collectionCount - deckCount;
               if (availableCount <= 0) return null;

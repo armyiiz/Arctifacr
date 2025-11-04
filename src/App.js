@@ -13,33 +13,25 @@ import { generateRoute, STAGE_TYPES } from './gameLogic';
 
 const MAX_HP = 10;
 
+const loadInitialState = (key, defaultValue) => {
+  try {
+    const savedItem = localStorage.getItem(key);
+    return savedItem ? JSON.parse(savedItem) : defaultValue;
+  } catch (error) {
+    console.error(`Error loading ${key} from localStorage`, error);
+    return defaultValue;
+  }
+};
+
 function App() {
-  const [playerGold, setPlayerGold] = useState(0);
-  const [playerArtifacts, setPlayerArtifacts] = useState([]);
-  const [playerCollection, setPlayerCollection] = useState({});
+  const [playerGold, setPlayerGold] = useState(() => loadInitialState('playerGold', 0));
+  const [playerArtifacts, setPlayerArtifacts] = useState(() => loadInitialState('playerArtifacts', []));
+  const [playerCollection, setPlayerCollection] = useState(() => loadInitialState('playerCollection', { 'Traveler': 12 }));
   const [currentScreen, setCurrentScreen] = useState('main_menu');
   const [route, setRoute] = useState([]);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
   const [battleResult, setBattleResult] = useState(null);
   const [playerHP, setPlayerHP] = useState(MAX_HP);
-
-  // Load game data from localStorage
-  useEffect(() => {
-    const savedGold = localStorage.getItem('playerGold');
-    if (savedGold) {
-      setPlayerGold(JSON.parse(savedGold));
-    }
-    const savedArtifacts = localStorage.getItem('playerArtifacts');
-    if (savedArtifacts) {
-      setPlayerArtifacts(JSON.parse(savedArtifacts));
-    }
-    const savedCollection = localStorage.getItem('playerCollection');
-    if (savedCollection) {
-      setPlayerCollection(JSON.parse(savedCollection));
-    } else {
-      setPlayerCollection({ 'Traveler': 12 });
-    }
-  }, []);
 
   // Save game data to localStorage
   useEffect(() => {
@@ -142,7 +134,7 @@ function App() {
       case 'post_battle':
         return <PostBattleScreen isWin={battleResult} onContinue={handlePostBattleContinue} />;
       case 'deck_edit':
-        return <DeckEditScreen onBack={goToMainMenu} />;
+        return <DeckEditScreen onBack={goToMainMenu} playerCollection={playerCollection} />;
       case 'collection':
         return <CollectionScreen onBack={goToMainMenu} playerCollection={playerCollection} />;
       case 'main_menu':
