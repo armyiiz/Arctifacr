@@ -106,12 +106,18 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       const cardToMove = newHand.splice(selectedCard.index, 1)[0];
 
       // วางการ์ดลงใน "สำเนา" ของกระดาน
-      newBoard[slotIndex] = cardToMove;
+      newBoard[slotIndex] = { ...cardToMove, faceUp: true };
 
       // อัปเดต State ด้วย "สำเนา" ใหม่
       setPlayerHand(newHand);
       setPlayerBoard(newBoard);
       setSelectedCard(null); // ล้างการ์ดที่เลือกค้าง (แก้บั๊ก hover)
+    }
+  };
+
+  const handleForfeit = () => {
+    if (window.confirm('Are you sure you want to forfeit the match?')) {
+      onGameOver(false);
     }
   };
 
@@ -263,7 +269,7 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
   return (
     <div className="battle-screen">
       <div className="enemy-info">
-        <h2>{stage.enemy?.name || 'Opponent'} HP: {aiHP}</h2>
+        <h2>{(stage.enemy?.name || 'Opponent').replace(/_/g, ' ')} HP: {aiHP}</h2>
       </div>
       <Board
         playerSlots={playerBoard}
@@ -275,6 +281,7 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       </div>
       <div className="actions">
         <button onClick={handleBattle} disabled={gameState !== 'player_turn' || playerBoard.some(c => c === null)}>Battle!</button>
+        <button onClick={handleForfeit} className="forfeit-button" disabled={gameState === 'resolving'}>Forfeit</button>
       </div>
       <Hand
         cards={playerHand}

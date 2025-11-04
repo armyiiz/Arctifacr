@@ -14,8 +14,8 @@
 }
 
 .card-slot {
-  width: 100px;
-  height: 140px;
+  width: 120px;
+  height: 168px;
   border: 2px dashed #ccc;
   border-radius: 10px;
   display: flex;
