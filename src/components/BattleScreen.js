@@ -73,55 +73,33 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
     startNewGame();
   }, [drawCards, stage]);
 
-  const draggedCardRef = React.useRef(null);
+  const [selectedCard, setSelectedCard] = useState(null);
 
-  const handleCardDragStart = (e, card) => {
-    e.dataTransfer.setData('cardId', card.id.toString());
+  const handleSelectCardFromHand = (card, index) => {
+    setSelectedCard({ card: card, index: index });
   };
 
-  const handleGlobalTouchEnd = (e) => {
-    if (draggedCardRef.current) {
-      const touch = e.changedTouches[0];
-      const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-      const slotIndex = dropTarget ? dropTarget.getAttribute('data-slot-index') : null;
-      if (slotIndex !== null) {
-        handleCardDrop({ cardId: draggedCardRef.current.id }, 'board', parseInt(slotIndex, 10));
-      }
-      draggedCardRef.current = null;
+  const handleSelectBoardSlot = (slotIndex) => {
+    // Condition 1 (วางการ์ด): If a card is selected and the board slot is empty
+    if (selectedCard && playerBoard[slotIndex] === null) {
+        const newHand = playerHand.filter((_, i) => i !== selectedCard.index);
+        const newBoard = [...playerBoard];
+        newBoard[slotIndex] = { ...selectedCard.card, faceUp: false };
+
+        setPlayerHand(newHand);
+        setPlayerBoard(newBoard);
+        setSelectedCard(null);
     }
-  };
+    // Condition 2 (ยกการ์ดคืน): If no card is selected and we click a non-empty slot
+    else if (!selectedCard && playerBoard[slotIndex] !== null) {
+        const cardToReturn = playerBoard[slotIndex];
+        const newHand = [...playerHand, cardToReturn];
+        const newBoard = [...playerBoard];
+        newBoard[slotIndex] = null;
 
-  const handleCardTouchStart = (e, card) => {
-    draggedCardRef.current = card;
-  };
-
-  useEffect(() => {
-    const handleTouchMove = (e) => {
-      if (draggedCardRef.current) {
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener('touchend', handleGlobalTouchEnd);
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    return () => {
-      window.removeEventListener('touchend', handleGlobalTouchEnd);
-      window.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, []);
-
-  const handleCardDrop = (cardInfo, target, slotIndex) => {
-    if (gameState !== 'player_turn' || !cardInfo.cardId || playerBoard[slotIndex]) return;
-    const cardId = parseInt(cardInfo.cardId, 10);
-    const cardToMove = playerHand.find(c => c.id === cardId);
-    if (!cardToMove) return;
-
-    const newHand = playerHand.filter(c => c.id !== cardId);
-    const newBoard = [...playerBoard];
-    newBoard[slotIndex] = { ...cardToMove, faceUp: false };
-    setPlayerHand(newHand);
-    setPlayerBoard(newBoard);
+        setPlayerHand(newHand);
+        setPlayerBoard(newBoard);
+    }
   };
 
   const handleBattle = () => {
@@ -245,7 +223,7 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       <Board
         playerSlots={playerBoard}
         opponentSlots={enemyBoard}
-        onCardDrop={handleCardDrop}
+        onSelectSlot={handleSelectBoardSlot}
       />
       <div className="player-info">
         <h2>Player HP: {playerHP}</h2>
@@ -255,8 +233,8 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
       </div>
       <Hand
         cards={playerHand}
-        onCardDragStart={handleCardDragStart}
-        onCardTouchStart={handleCardTouchStart}
+        selectedCard={selectedCard}
+        onSelectCard={handleSelectCardFromHand}
       />
     </div>
   );
