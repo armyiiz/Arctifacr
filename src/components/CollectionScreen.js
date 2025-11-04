@@ -1,28 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './CollectionScreen.css';
-import Card from './Card'; // Assuming Card component is in the same directory
-import { getAllCards } from '../gameLogic'; // We will create this function
+import Card from './Card';
+import { getAllCards } from '../gameLogic';
 
 const CARDS_PER_PAGE = 12;
 
-const CollectionScreen = ({ onBack }) => {
-  const [collection, setCollection] = useState({});
+const CollectionScreen = ({ onBack, playerCollection }) => {
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    const savedCollection = JSON.parse(localStorage.getItem('card_collection'));
-    if (savedCollection) {
-      setCollection(savedCollection);
-    } else {
-      const defaultCollection = {
-        'Dark_Rat': 3,
-        'Shadow_Hound': 2,
-        'Traveler': 12,
-      };
-      setCollection(defaultCollection);
-      localStorage.setItem('card_collection', JSON.stringify(defaultCollection));
-    }
-  }, []);
 
   const allCards = getAllCards();
 
@@ -46,7 +30,7 @@ const CollectionScreen = ({ onBack }) => {
       <h1 className="collection-title">Card Collection</h1>
       <div className="collection-grid">
         {currentCards.map(card => {
-          const count = collection[card.name] || 0;
+          const count = playerCollection[card.name] || 0;
           return (
             <div key={card.id} className="collection-card-item">
               <Card card={card} isFaceUp={true} />

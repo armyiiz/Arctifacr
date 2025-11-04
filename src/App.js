@@ -16,6 +16,7 @@ const MAX_HP = 10;
 function App() {
   const [playerGold, setPlayerGold] = useState(0);
   const [playerArtifacts, setPlayerArtifacts] = useState([]);
+  const [playerCollection, setPlayerCollection] = useState({});
   const [currentScreen, setCurrentScreen] = useState('main_menu');
   const [route, setRoute] = useState([]);
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
@@ -32,13 +33,20 @@ function App() {
     if (savedArtifacts) {
       setPlayerArtifacts(JSON.parse(savedArtifacts));
     }
+    const savedCollection = localStorage.getItem('playerCollection');
+    if (savedCollection) {
+      setPlayerCollection(JSON.parse(savedCollection));
+    } else {
+      setPlayerCollection({ 'Traveler': 12 });
+    }
   }, []);
 
   // Save game data to localStorage
   useEffect(() => {
     localStorage.setItem('playerGold', JSON.stringify(playerGold));
     localStorage.setItem('playerArtifacts', JSON.stringify(playerArtifacts));
-  }, [playerGold, playerArtifacts]);
+    localStorage.setItem('playerCollection', JSON.stringify(playerCollection));
+  }, [playerGold, playerArtifacts, playerCollection]);
 
   const handleStartGame = () => {
     setCurrentScreen('boss_selection');
@@ -136,7 +144,7 @@ function App() {
       case 'deck_edit':
         return <DeckEditScreen onBack={goToMainMenu} />;
       case 'collection':
-        return <CollectionScreen onBack={goToMainMenu} />;
+        return <CollectionScreen onBack={goToMainMenu} playerCollection={playerCollection} />;
       case 'main_menu':
       default:
         return <MainMenu
