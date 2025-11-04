@@ -4,6 +4,8 @@ import MainMenu from './components/MainMenu';
 import RouteSelection from './components/RouteSelection';
 import BattleScreen from './components/BattleScreen';
 import PostBattleScreen from './components/PostBattleScreen';
+import DeckEditScreen from './components/DeckEditScreen';
+import CollectionScreen from './components/CollectionScreen';
 import { generateRoute } from './gameLogic';
 
 function App() {
@@ -46,6 +48,10 @@ function App() {
     setBattleResult(null); // Reset battle result
   };
 
+  const goToDeckEdit = () => setCurrentScreen('deck_edit');
+  const goToCollection = () => setCurrentScreen('collection');
+  const goToMainMenu = () => setCurrentScreen('main_menu');
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'route_selection':
@@ -57,9 +63,18 @@ function App() {
                 />;
       case 'post_battle':
         return <PostBattleScreen isWin={battleResult} onContinue={handlePostBattleContinue} />;
+      case 'deck_edit':
+        return <DeckEditScreen onBack={goToMainMenu} />;
+      case 'collection':
+        return <CollectionScreen onBack={goToMainMenu} />;
       case 'main_menu':
       default:
-        return <MainMenu onStartGame={handleStartGame} onOptions={() => alert('Options coming soon!')} />;
+        return <MainMenu
+                  onStartGame={handleStartGame}
+                  onDeckEdit={goToDeckEdit}
+                  onCollection={goToCollection}
+                  onOptions={() => alert('Options coming soon!')}
+                />;
     }
   };
 

@@ -1,7 +1,20 @@
 // src/storyData.js
 
-// Using ALL_CARDS from gameLogic to build decks
-import { ALL_CARDS } from './gameLogic.js';
+// Helper function to create simple card objects for enemy decks
+const createEnemyCard = (number, id) => ({ id: `e_${id}`, name: `Enemy Card ${number}`, number, art: 'Enemy' });
+
+// Helper to build a deck from a simple config
+const createEnemyDeck = (config) => {
+    const deck = [];
+    let idCounter = 0;
+    for (const [number, count] of Object.entries(config)) {
+        for (let i = 0; i < count; i++) {
+            deck.push(createEnemyCard(parseInt(number), idCounter++));
+        }
+    }
+    return deck;
+};
+
 
 // Define enemy types
 export const ENEMIES = {
@@ -13,53 +26,9 @@ export const ENEMIES = {
 
 // Define enemy decks
 export const ENEMY_DECKS = {
-  EASY_DECK: [
-    ...ALL_CARDS.filter(c => c.number === 1).slice(0, 4), // 4x 1
-    ...ALL_CARDS.filter(c => c.number === 2).slice(0, 3), // 3x 2
-    ...ALL_CARDS.filter(c => c.number === 3).slice(0, 2), // 2x 3
-    ...ALL_CARDS.filter(c => c.number === 4),             // 1x 4
-    ...ALL_CARDS.filter(c => c.number === 5),             // 1x 5
-    ...ALL_CARDS.filter(c => c.number === 6),             // 1x 6
-  ],
-  MEDIUM_DECK: [
-    ...ALL_CARDS.filter(c => c.number === 1).slice(0, 2),
-    ...ALL_CARDS.filter(c => c.number === 2),
-    ...ALL_CARDS.filter(c => c.number === 3),
-    ...ALL_CARDS.filter(c => c.number === 4),
-    ...ALL_CARDS.filter(c => c.number === 5),
-    ...ALL_CARDS.filter(c => c.number === 6),
-    ...ALL_CARDS.filter(c => c.number === 7),
-    ...ALL_CARDS.filter(c => c.number === 8),
-  ],
-  BOSS_DECK: [
-    ...ALL_CARDS.filter(c => c.number >= 4), // All high cards
-  ]
+  EASY_DECK: createEnemyDeck({ 1: 4, 2: 3, 3: 2, 4: 1, 5: 1, 6: 1 }),
+  MEDIUM_DECK: createEnemyDeck({ 1: 2, 2: 2, 3: 2, 4: 2, 5: 1, 6: 1, 7: 1, 8: 1 }),
+  BOSS_DECK: createEnemyDeck({ 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2 }),
 };
 
-// Define stage types and their content
-export const STAGE_TYPES = {
-  BATTLE: 'BATTLE',
-  ELITE_BATTLE: 'ELITE_BATTLE',
-  TREASURE: 'TREASURE',
-  SHOP: 'SHOP',
-  BOSS: 'BOSS',
-};
-
-// Pools of encounters for different parts of the route
-export const STAGE_POOLS = {
-  EARLY: [
-    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.GOBLIN, deck: ENEMY_DECKS.EASY_DECK },
-    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.GOBLIN, deck: ENEMY_DECKS.EASY_DECK },
-    { type: STAGE_TYPES.TREASURE },
-    { type: STAGE_TYPES.SHOP },
-  ],
-  MID: [
-    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.ORC, deck: ENEMY_DECKS.MEDIUM_DECK },
-    { type: STAGE_TYPES.ELITE_BATTLE, enemy: ENEMIES.MAGE, deck: ENEMY_DECKS.MEDIUM_DECK },
-    { type: STAGE_TYPES.TREASURE },
-    { type: STAGE_TYPES.SHOP },
-  ],
-  FINAL: [
-    { type: STAGE_TYPES.BOSS, enemy: ENEMIES.BOSS_KNIGHT, deck: ENEMY_DECKS.BOSS_DECK },
-  ]
-};
+// No longer needed here

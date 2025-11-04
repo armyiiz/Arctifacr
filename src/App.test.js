@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 
@@ -8,7 +9,7 @@ test('renders main menu first, then navigates to route selection', () => {
   const titleElement = screen.getByText(/Artifact/i);
   expect(titleElement).toBeInTheDocument();
 
-  const startGameButton = screen.getByRole('button', { name: /Start Game/i });
+  const startGameButton = screen.getByRole('button', { name: /Story Mode/i });
   expect(startGameButton).toBeInTheDocument();
 
   // 2. Simulate clicking the "Start Game" button

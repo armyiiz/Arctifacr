@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Board from './Board';
 import Hand from './Hand';
 import './BattleScreen.css';
-import { createDeck, shuffleDeck } from '../gameLogic';
-import { STAGE_TYPES } from '../storyData';
+import { createPlayerDeck, createEnemyDeck, shuffleDeck, STAGE_TYPES } from '../gameLogic';
 
 const PLAYER_STARTING_HP = 10;
 const ENEMY_STARTING_HP = 10;
@@ -50,8 +49,11 @@ const BattleScreen = ({ stage, onGameOver }) => {
 
   useEffect(() => {
     const startNewGame = () => {
-      const pDeck = shuffleDeck(createDeck());
-      const eDeck = (stage && stage.deck) ? shuffleDeck([...stage.deck]) : shuffleDeck(createDeck());
+      // Load player's deck from localStorage or create a default one
+      const savedDeckConfig = JSON.parse(localStorage.getItem('active_deck'));
+      const pDeck = shuffleDeck(createPlayerDeck(savedDeckConfig));
+
+      const eDeck = (stage && stage.deck) ? shuffleDeck([...stage.deck]) : shuffleDeck(createEnemyDeck([ {name: 'Enemy', number: 1, art: 'Enemy', count: 12} ])); // Enemy uses default deck for now
 
       const { drawn: pHand, remainingDeck: pDeckAfter } = drawCards(pDeck, [], STARTING_HAND_SIZE);
       const { drawn: eHand, remainingDeck: eDeckAfter } = drawCards(eDeck, [], STARTING_HAND_SIZE);

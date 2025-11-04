@@ -1,47 +1,100 @@
 // src/gameLogic.js
-import { STAGE_POOLS } from './storyData.js';
 
-// This will eventually be populated with all cards from the game's design.
-// For now, we'll use a basic set.
-export const ALL_CARDS = [
-  { id: 1, name: 'Traveller_1', number: 1, art: 'Traveller' },
-  { id: 2, name: 'Traveller_2', number: 1, art: 'Traveller' },
-  { id: 3, name: 'Traveller_3', number: 1, art: 'Traveller' },
-  { id: 4, name: 'Traveller_4', number: 2, art: 'Traveller' },
-  { id: 5, name: 'Traveller_5', number: 2, art: 'Traveller' },
-  { id: 6, name: 'Traveller_6', number: 3, art: 'Traveller' },
-  { id: 7, name: 'Traveller_7', number: 4, art: 'Traveller' },
-  { id: 8, name: 'Traveller_8', number: 5, art: 'Traveller' },
-  { id: 9, name: 'Traveller_9', number: 6, art: 'Traveller' },
-  { id: 10, name: 'Traveller_10', number: 7, art: 'Traveller' },
-  { id: 11, name: 'Traveller_11', number: 8, art: 'Traveller' },
-  { id: 12, name: 'Traveller_12', number: 9, art: 'Traveller' },
+// Define stage types and their content
+export const STAGE_TYPES = {
+  BATTLE: 'BATTLE',
+  ELITE_BATTLE: 'ELITE_BATTLE',
+  TREASURE: 'TREASURE',
+  SHOP: 'SHOP',
+  BOSS: 'BOSS',
+};
+
+// Defines all unique card types in the game.
+const UNIQUE_CARDS = [
+  { id: 'c001', name: 'Traveler', art: 'Traveler', baseNumber: 1 },
+  { id: 'c002', name: 'Traveler', art: 'Traveler', baseNumber: 2 },
+  { id: 'c003', name: 'Traveler', art: 'Traveler', baseNumber: 3 },
+  { id: 'c004', name: 'Traveler', art: 'Traveler', baseNumber: 4 },
+  { id: 'c005', name: 'Traveler', art: 'Traveler', baseNumber: 5 },
+  { id: 'c006', name: 'Traveler', art: 'Traveler', baseNumber: 6 },
+  { id: 'c007', name: 'Traveler', art: 'Traveler', baseNumber: 7 },
+  { id: 'c008', name: 'Traveler', art: 'Traveler', baseNumber: 8 },
+  { id: 'c009', name: 'Traveler', art: 'Traveler', baseNumber: 9 },
+  // Shadow Route
+  { id: 'e001', name: 'Dark_Rat', art: 'Dark_Rat', baseNumber: 2 },
+  { id: 'e002', name: 'Shadow_Hound', art: 'Shadow_Hound', baseNumber: 4 },
+  // ... add all other cards here
 ];
 
+// Function to get a list of all unique cards, used for collection, deck building, etc.
+export const getAllCards = () => {
+    // In the future, this could be more complex, but for now, we just return the master list.
+    // We map it to assign a 'current' number, which might be modified by in-game effects.
+    return UNIQUE_CARDS.map(card => ({ ...card, number: card.baseNumber }));
+};
+
+
 /**
- * Creates a standard 12-card deck based on the game rules.
+ * Creates a standard 12-card player deck based on the game rules.
+ * This function will be expanded to use the player's customized deck.
  */
-export const createDeck = () => {
-  // The structure is: 3x(1), 2x(2), 1x(3), 1x(4), 1x(5), 1x(6), 1x(7), 1x(8), 1x(9)
-  const deck = [
-    ...ALL_CARDS.filter(c => c.number === 1),
-    ...ALL_CARDS.filter(c => c.number === 2),
-    ...ALL_CARDS.filter(c => c.number === 3),
-    ...ALL_CARDS.filter(c => c.number === 4),
-    ...ALL_CARDS.filter(c => c.number === 5),
-    ...ALL_CARDS.filter(c => c.number === 6),
-    ...ALL_CARDS.filter(c => c.number === 7),
-    ...ALL_CARDS.filter(c => c.number === 8),
-    ...ALL_CARDS.filter(c => c.number === 9),
+export const createPlayerDeck = (customDeck) => {
+  if (customDeck) {
+    // Logic to build deck from player's saved configuration
+    return customDeck.map((cardName, index) => {
+      const cardTemplate = UNIQUE_CARDS.find(c => c.name === cardName);
+      return { ...cardTemplate, id: `p${index}`, number: cardTemplate.baseNumber };
+    });
+  }
+
+  // Default starter deck if no custom deck is provided
+  const starterDeckComposition = { 'Traveler': 12 }; // Should be more specific based on numbers
+  const deck = [];
+  let cardIdCounter = 0;
+
+  // This logic needs to be updated to match the 3x1, 2x2, etc. rule
+  const defaultDeckConfig = [
+      { name: 'Traveler', number: 1, count: 3 },
+      { name: 'Traveler', number: 2, count: 2 },
+      { name: 'Traveler', number: 3, count: 1 },
+      { name: 'Traveler', number: 4, count: 1 },
+      { name: 'Traveler', number: 5, count: 1 },
+      { name: 'Traveler', number: 6, count: 1 },
+      { name: 'Traveler', number: 7, count: 1 },
+      { name: 'Traveler', number: 8, count: 1 },
+      { name: 'Traveler', number: 9, count: 1 },
   ];
+
+  defaultDeckConfig.forEach(config => {
+      for (let i = 0; i < config.count; i++) {
+          const cardTemplate = UNIQUE_CARDS.find(c => c.name === config.name && c.baseNumber === config.number);
+          if (cardTemplate) {
+              deck.push({ ...cardTemplate, id: `p${cardIdCounter++}`, number: cardTemplate.baseNumber });
+          }
+      }
+  });
+
+
   return deck;
 };
 
-/**
- * Shuffles an array of cards using the Fisher-Yates algorithm.
- * @param {Array} deck The deck to shuffle.
- * @returns {Array} The shuffled deck.
- */
+export const createEnemyDeck = (deckConfig) => {
+  const deck = [];
+  let idCounter = 0;
+  deckConfig.forEach(cardInfo => {
+    for (let i = 0; i < cardInfo.count; i++) {
+      deck.push({
+        id: `e${idCounter++}`,
+        name: cardInfo.name,
+        number: cardInfo.number,
+        art: cardInfo.art,
+      });
+    }
+  });
+  return deck;
+};
+
+// ... (shuffleDeck logic remains the same)
 export const shuffleDeck = (deck) => {
   const shuffled = [...deck];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -52,6 +105,27 @@ export const shuffleDeck = (deck) => {
 };
 
 // --- Story Mode Logic ---
+import { ENEMIES, ENEMY_DECKS } from './storyData.js';
+
+// Pools of encounters for different parts of the route
+export const STAGE_POOLS = {
+  EARLY: [
+    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.GOBLIN, deck: ENEMY_DECKS.EASY_DECK },
+    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.GOBLIN, deck: ENEMY_DECKS.EASY_DECK },
+    { type: STAGE_TYPES.TREASURE },
+    { type: STAGE_TYPES.SHOP },
+  ],
+  MID: [
+    { type: STAGE_TYPES.BATTLE, enemy: ENEMIES.ORC, deck: ENEMY_DECKS.MEDIUM_DECK },
+    { type: STAGE_TYPES.ELITE_BATTLE, enemy: ENEMIES.MAGE, deck: ENEMY_DECKS.MEDIUM_DECK },
+    { type: STAGE_TYPES.TREASURE },
+    { type: STAGE_TYPES.SHOP },
+  ],
+  FINAL: [
+    { type: STAGE_TYPES.BOSS, enemy: ENEMIES.BOSS_KNIGHT, deck: ENEMY_DECKS.BOSS_DECK },
+  ]
+};
+
 
 /**
  * Generates a random route for the story mode.
@@ -59,22 +133,15 @@ export const shuffleDeck = (deck) => {
  */
 export const generateRoute = () => {
   const route = [];
-
-  // Helper to get a random element from an array
   const getRandomFromPool = (pool) => pool[Math.floor(Math.random() * pool.length)];
 
-  // The route structure is roughly:
-  // 5 early stages, 5 mid stages, 1 final boss stage.
   for (let i = 0; i < 5; i++) {
     route.push(getRandomFromPool(STAGE_POOLS.EARLY));
   }
   for (let i = 0; i < 5; i++) {
     route.push(getRandomFromPool(STAGE_POOLS.MID));
   }
-
-  // Add the final boss stage
   route.push(STAGE_POOLS.FINAL[0]);
 
-  // Add unique IDs to each stage for state management
   return route.map((stage, index) => ({ ...stage, id: `stage_${index}` }));
 };
