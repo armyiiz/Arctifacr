@@ -12,18 +12,61 @@ export const STAGE_TYPES = {
 
 // Defines all unique card types in the game. This is the master database.
 export const ALL_CARDS = [
-  { id: 'T01', name: 'Traveller', art: 'Traveller' },
-  // Shadow Route
-  { id: 'E01', name: 'Dark Rat', art: 'Dark_Rat', number: 2 },
-  { id: 'E02', name: 'Shadow Hound', art: 'Shadow_Hound', number: 4 },
-  { id: 'E03', name: 'Night Reaper', art: 'Night_Reaper', number: 6 },
-  { id: 'E04', name: 'Umbral Knight Commander', art: 'Umbral_Knight_Commander', number: 8 },
-  // Earth Route
-  { id: 'E05', name: 'Stone Imp', art: 'Stone_Imp', number: 2 },
-  { id: 'E06', name: 'Rockback Boar', art: 'Rockback_Boar', number: 4 },
-  { id: 'E07', name: 'Crystal Rhino', art: 'Crystal_Rhino', number: 6 },
-  { id: 'E08', name: 'Colossus Titan', art: 'Colossus_Titan', number: 8 },
-  // ... other monsters would go here
+    { id: 'T01', name: 'Traveller', art: 'Traveller' },
+    // Shadow Route (Ender)
+    { id: 'E01', name: 'Dark Rat', art: 'Dark_Rat' },
+    { id: 'E02', name: 'Shadow Hound', art: 'Shadow_Hound' },
+    { id: 'E03', name: 'Night Reaper', art: 'Night_Reaper' },
+    { id: 'E04', name: 'Umbral Knight Commander', art: 'Umbral_Knight_Commander' },
+    { id: 'B01', name: 'Ender', art: 'Ender' },
+    // Earth Route (Gamma)
+    { id: 'E05', name: 'Stone Imp', art: 'Stone_Imp' },
+    { id: 'E06', name: 'Rockback Boar', art: 'Rockback_Boar' },
+    { id: 'E07', name: 'Crystal Rhino', art: 'Crystal_Rhino' },
+    { id: 'E08', name: 'Colossus Titan', art: 'Colossus_Titan' },
+    { id: 'B02', name: 'Gamma', art: 'Gamma' },
+    // Steel Route (Razortail)
+    { id: 'E09', name: 'Iron Ratling', art: 'Iron_Ratling' },
+    { id: 'E10', name: 'Steel Wolf', art: 'Steel_Wolf' },
+    { id: 'E11', name: 'Blade Golem', art: 'Blade_Golem' },
+    { id: 'E12', name: 'War Machine Juggernaut', art: 'War_Machine_Juggernaut' },
+    { id: 'B03', name: 'Razortail', art: 'Razortail' },
+    // Forest Route (Evergreen)
+    { id: 'E13', name: 'Vine Serpent', art: 'Vine_Serpent' },
+    { id: 'E14', name: 'Spore Bear', art: 'Spore_Bear' },
+    { id: 'E15', name: 'Ancient Treant Warrior', art: 'Ancient_Treant_Warrior' },
+    { id: 'E16', name: 'Greatwood Guardian', art: 'Greatwood_Guardian' },
+    { id: 'B04', name: 'Evergreen', art: 'Evergreen' },
+    // Radiance Route (Oryu)
+    { id: 'E17', name: 'Golden Hawk', art: 'Golden_Hawk' },
+    { id: 'E18', name: 'Sun Stag', art: 'Sun_Stag' },
+    { id: 'E19', name: 'Radiant Knight', art: 'Radiant_Knight' },
+    { id: 'E20', name: 'Seraph Judge', art: 'Seraph_Judge' },
+    { id: 'B05', name: 'Oryu', art: 'Oryu' },
+    // Storm Route (Chrome)
+    { id: 'E21', name: 'Storm Crow', art: 'Storm_Crow' },
+    { id: 'E22', name: 'Thunder Lizard', art: 'Thunder_Lizard' },
+    { id: 'E23', name: 'Cyclone Djinn', art: 'Cyclone_Djinn' },
+    { id: 'E24', name: 'Tempest Colossus', art: 'Tempest_Colossus' },
+    { id: 'B06', name: 'Chrome', art: 'Chrome' },
+    // Illusion Route (Escalon)
+    { id: 'E25', name: 'Trickster Goblin', art: 'Trickster_Goblin' },
+    { id: 'E26', name: 'Mirror Stalker', art: 'Mirror_Stalker' },
+    { id: 'E27', name: 'Dream Hunter', art: 'Dream_Hunter' },
+    { id: 'E28', name: 'Vision Warlock', art: 'Vision_Warlock' },
+    { id: 'B07', name: 'Escalon', art: 'Escalon' },
+    // Cosmic Route (Fresia)
+    { id: 'E29', name: 'Falling Starling', art: 'Falling_Starling' },
+    { id: 'E30', name: 'Meteor Brute', art: 'Meteor_Brute' },
+    { id: 'E31', name: 'Astral Serpent', art: 'Astral_Serpent' },
+    { id: 'E32', name: 'Void Sentinel', art: 'Void_Sentinel' },
+    { id: 'B08', name: 'Fresia', art: 'Fresia' },
+    // Underworld Route (Specter)
+    { id: 'E33', name: 'Bone Hound', art: 'Bone_Hound' },
+    { id: 'E34', name: 'Wailing Ghoul', art: 'Wailing_Ghoul' },
+    { id: 'E35', name: 'Death Knight', art: 'Death_Knight' },
+    { id: 'E36', name: 'Herald of the Underworld', art: 'Herald_of_the_Underworld' },
+    { id: 'B09', name: 'Specter', art: 'Specter' },
 ];
 
 // Function to get a card's data by its ID

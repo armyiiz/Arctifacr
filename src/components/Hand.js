@@ -14,6 +14,7 @@ const Hand = ({ cards, onSelectCard, selectedCard }) => {
             isFaceUp={true}
             onClick={() => onSelectCard(card, index)}
             className={isSelected ? 'selected' : ''}
+            showName={false}
           />
         );
       })}

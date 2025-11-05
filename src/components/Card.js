@@ -1,12 +1,12 @@
 import React from 'react';
 import './Card.css';
 
-const Card = ({ card, isFaceUp, onClick, className }) => {
+const Card = ({ card, isFaceUp, onClick, className, showName = true }) => {
   const cardContent = isFaceUp ? (
     <div className="card-face card-front">
       <div className="card-art" style={{ backgroundImage: `url(${card.art})` }}></div>
       <img src={`/art/icons/Num_${card.number}.png`} alt={`Number ${card.number}`} className="card-number-icon" />
-      <div className="card-name">{card.name.replace(/_/g, ' ')}</div>
+      {showName && <div className="card-name">{card.name.replace(/_/g, ' ')}</div>}
     </div>
   ) : (
     <div className="card-face card-back"></div>

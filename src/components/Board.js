@@ -12,7 +12,7 @@ const Board = ({ playerSlots, opponentSlots, onSelectSlot }) => {
         onClick={isPlayer ? () => onSelectSlot(index) : undefined}
         data-slot-index={index}
       >
-        {card ? <Card card={card} isFaceUp={card.faceUp} /> : <div className="empty-slot"></div>}
+        {card ? <Card card={card} isFaceUp={card.faceUp} showName={false} /> : <div className="empty-slot"></div>}
       </div>
     ));
   };
