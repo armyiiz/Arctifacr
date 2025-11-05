@@ -13,14 +13,15 @@ import { generateRoute, STAGE_TYPES } from './gameLogic';
 
 const MAX_HP = 10;
 
+// The player's collection now stores the count of each card type they own.
 const initialPlayerCollection = {
-  'T01': 3, 'T02': 2, 'T03': 1, 'T04': 1, 'T05': 1,
-  'T06': 1, 'T07': 1, 'T08': 1, 'T09': 1,
+  'T01': 12, // The player starts with 12 Traveller cards.
 };
 
 const loadInitialState = (key, defaultValue) => {
   try {
     const savedItem = localStorage.getItem(key);
+    // Ensure that if the collection is not in storage, it gets the default value.
     if (key === 'playerCollection' && !savedItem) {
       return defaultValue;
     }
