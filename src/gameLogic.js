@@ -1,6 +1,7 @@
 // src/gameLogic.js
-import { ENEMIES, ENEMY_DECKS, storyChapter } from './storyData.js';
+import { storyChapter, FACTIONS } from './storyData.js';
 
+export { FACTIONS };
 
 // Define stage types and their content
 export const STAGE_TYPES = {
@@ -12,61 +13,61 @@ export const STAGE_TYPES = {
 
 // Defines all unique card types in the game. This is the master database.
 export const ALL_CARDS = [
-    { id: 'T01', name: 'Traveller', art: 'Traveller' },
-    // Shadow Route (Ender)
-    { id: 'E01', name: 'Dark Rat', art: 'Dark_Rat' },
-    { id: 'E02', name: 'Shadow Hound', art: 'Shadow_Hound' },
-    { id: 'E03', name: 'Night Reaper', art: 'Night_Reaper' },
-    { id: 'E04', name: 'Umbral Knight Commander', art: 'Umbral_Knight_Commander' },
-    { id: 'B01', name: 'Ender', art: 'Ender' },
-    // Earth Route (Gamma)
-    { id: 'E05', name: 'Stone Imp', art: 'Stone_Imp' },
-    { id: 'E06', name: 'Rockback Boar', art: 'Rockback_Boar' },
-    { id: 'E07', name: 'Crystal Rhino', art: 'Crystal_Rhino' },
-    { id: 'E08', name: 'Colossus Titan', art: 'Colossus_Titan' },
-    { id: 'B02', name: 'Gamma', art: 'Gamma' },
-    // Steel Route (Razortail)
-    { id: 'E09', name: 'Iron Ratling', art: 'Iron_Ratling' },
-    { id: 'E10', name: 'Steel Wolf', art: 'Steel_Wolf' },
-    { id: 'E11', name: 'Blade Golem', art: 'Blade_Golem' },
-    { id: 'E12', name: 'War Machine Juggernaut', art: 'War_Machine_Juggernaut' },
-    { id: 'B03', name: 'Razortail', art: 'Razortail' },
-    // Forest Route (Evergreen)
-    { id: 'E13', name: 'Vine Serpent', art: 'Vine_Serpent' },
-    { id: 'E14', name: 'Spore Bear', art: 'Spore_Bear' },
-    { id: 'E15', name: 'Ancient Treant Warrior', art: 'Ancient_Treant_Warrior' },
-    { id: 'E16', name: 'Greatwood Guardian', art: 'Greatwood_Guardian' },
-    { id: 'B04', name: 'Evergreen', art: 'Evergreen' },
-    // Radiance Route (Oryu)
-    { id: 'E17', name: 'Golden Hawk', art: 'Golden_Hawk' },
-    { id: 'E18', name: 'Sun Stag', art: 'Sun_Stag' },
-    { id: 'E19', name: 'Radiant Knight', art: 'Radiant_Knight' },
-    { id: 'E20', name: 'Seraph Judge', art: 'Seraph_Judge' },
-    { id: 'B05', name: 'Oryu', art: 'Oryu' },
-    // Storm Route (Chrome)
-    { id: 'E21', name: 'Storm Crow', art: 'Storm_Crow' },
-    { id: 'E22', name: 'Thunder Lizard', art: 'Thunder_Lizard' },
-    { id: 'E23', name: 'Cyclone Djinn', art: 'Cyclone_Djinn' },
-    { id: 'E24', name: 'Tempest Colossus', art: 'Tempest_Colossus' },
-    { id: 'B06', name: 'Chrome', art: 'Chrome' },
-    // Illusion Route (Escalon)
-    { id: 'E25', name: 'Trickster Goblin', art: 'Trickster_Goblin' },
-    { id: 'E26', name: 'Mirror Stalker', art: 'Mirror_Stalker' },
-    { id: 'E27', name: 'Dream Hunter', art: 'Dream_Hunter' },
-    { id: 'E28', name: 'Vision Warlock', art: 'Vision_Warlock' },
-    { id: 'B07', name: 'Escalon', art: 'Escalon' },
-    // Cosmic Route (Fresia)
-    { id: 'E29', name: 'Falling Starling', art: 'Falling_Starling' },
-    { id: 'E30', name: 'Meteor Brute', art: 'Meteor_Brute' },
-    { id: 'E31', name: 'Astral Serpent', art: 'Astral_Serpent' },
-    { id: 'E32', name: 'Void Sentinel', art: 'Void_Sentinel' },
-    { id: 'B08', name: 'Fresia', art: 'Fresia' },
-    // Underworld Route (Specter)
-    { id: 'E33', name: 'Bone Hound', art: 'Bone_Hound' },
-    { id: 'E34', name: 'Wailing Ghoul', art: 'Wailing_Ghoul' },
-    { id: 'E35', name: 'Death Knight', art: 'Death_Knight' },
-    { id: 'E36', name: 'Herald of the Underworld', art: 'Herald_of_the_Underworld' },
-    { id: 'B09', name: 'Specter', art: 'Specter' },
+    { id: 'T01', name: 'Traveller', art: 'Traveller', faction: FACTIONS.MIGHT },
+    // Shadow Route (Ender) - TRICKERY
+    { id: 'E01', name: 'Dark Rat', art: 'Dark_Rat', faction: FACTIONS.TRICKERY },
+    { id: 'E02', name: 'Shadow Hound', art: 'Shadow_Hound', faction: FACTIONS.TRICKERY },
+    { id: 'E03', name: 'Night Reaper', art: 'Night_Reaper', faction: FACTIONS.TRICKERY },
+    { id: 'E04', name: 'Umbral Knight Commander', art: 'Umbral_Knight_Commander', faction: FACTIONS.TRICKERY },
+    { id: 'B01', name: 'Ender', art: 'Ender', faction: FACTIONS.TRICKERY },
+    // Earth Route (Gamma) - MIGHT
+    { id: 'E05', name: 'Stone Imp', art: 'Stone_Imp', faction: FACTIONS.MIGHT },
+    { id: 'E06', name: 'Rockback Boar', art: 'Rockback_Boar', faction: FACTIONS.MIGHT },
+    { id: 'E07', name: 'Crystal Rhino', art: 'Crystal_Rhino', faction: FACTIONS.MIGHT },
+    { id: 'E08', name: 'Colossus Titan', art: 'Colossus_Titan', faction: FACTIONS.MIGHT },
+    { id: 'B02', name: 'Gamma', art: 'Gamma', faction: FACTIONS.MIGHT },
+    // Steel Route (Razortail) - MIGHT
+    { id: 'E09', name: 'Iron Ratling', art: 'Iron_Ratling', faction: FACTIONS.MIGHT },
+    { id: 'E10', name: 'Steel Wolf', art: 'Steel_Wolf', faction: FACTIONS.MIGHT },
+    { id: 'E11', name: 'Blade Golem', art: 'Blade_Golem', faction: FACTIONS.MIGHT },
+    { id: 'E12', name: 'War Machine Juggernaut', art: 'War_Machine_Juggernaut', faction: FACTIONS.MIGHT },
+    { id: 'B03', name: 'Razortail', art: 'Razortail', faction: FACTIONS.MIGHT },
+    // Forest Route (Evergreen) - MAGIC
+    { id: 'E13', name: 'Vine Serpent', art: 'Vine_Serpent', faction: FACTIONS.MAGIC },
+    { id: 'E14', name: 'Spore Bear', art: 'Spore_Bear', faction: FACTIONS.MAGIC },
+    { id: 'E15', name: 'Ancient Treant Warrior', art: 'Ancient_Treant_Warrior', faction: FACTIONS.MAGIC },
+    { id: 'E16', name: 'Greatwood Guardian', art: 'Greatwood_Guardian', faction: FACTIONS.MAGIC },
+    { id: 'B04', name: 'Evergreen', art: 'Evergreen', faction: FACTIONS.MAGIC },
+    // Radiance Route (Oryu) - MAGIC
+    { id: 'E17', name: 'Golden Hawk', art: 'Golden_Hawk', faction: FACTIONS.MAGIC },
+    { id: 'E18', name: 'Sun Stag', art: 'Sun_Stag', faction: FACTIONS.MAGIC },
+    { id: 'E19', name: 'Radiant Knight', art: 'Radiant_Knight', faction: FACTIONS.MAGIC },
+    { id: 'E20', name: 'Seraph Judge', art: 'Seraph_Judge', faction: FACTIONS.MAGIC },
+    { id: 'B05', name: 'Oryu', art: 'Oryu', faction: FACTIONS.MAGIC },
+    // Storm Route (Chrome) - MAGIC
+    { id: 'E21', name: 'Storm Crow', art: 'Storm_Crow', faction: FACTIONS.MAGIC },
+    { id: 'E22', name: 'Thunder Lizard', art: 'Thunder_Lizard', faction: FACTIONS.MAGIC },
+    { id: 'E23', name: 'Cyclone Djinn', art: 'Cyclone_Djinn', faction: FACTIONS.MAGIC },
+    { id: 'E24', name: 'Tempest Colossus', art: 'Tempest_Colossus', faction: FACTIONS.MAGIC },
+    { id: 'B06', name: 'Chrome', art: 'Chrome', faction: FACTIONS.MAGIC },
+    // Illusion Route (Escalon) - TRICKERY
+    { id: 'E25', name: 'Trickster Goblin', art: 'Trickster_Goblin', faction: FACTIONS.TRICKERY },
+    { id: 'E26', name: 'Mirror Stalker', art: 'Mirror_Stalker', faction: FACTIONS.TRICKERY },
+    { id: 'E27', name: 'Dream Hunter', art: 'Dream_Hunter', faction: FACTIONS.TRICKERY },
+    { id: 'E28', name: 'Vision Warlock', art: 'Vision_Warlock', faction: FACTIONS.TRICKERY },
+    { id: 'B07', name: 'Escalon', art: 'Escalon', faction: FACTIONS.TRICKERY },
+    // Cosmic Route (Fresia) - MIGHT
+    { id: 'E29', name: 'Falling Starling', art: 'Falling_Starling', faction: FACTIONS.MIGHT },
+    { id: 'E30', name: 'Meteor Brute', art: 'Meteor_Brute', faction: FACTIONS.MIGHT },
+    { id: 'E31', name: 'Astral Serpent', art: 'Astral_Serpent', faction: FACTIONS.MIGHT },
+    { id: 'E32', name: 'Void Sentinel', art: 'Void_Sentinel', faction: FACTIONS.MIGHT },
+    { id: 'B08', name: 'Fresia', art: 'Fresia', faction: FACTIONS.MIGHT },
+    // Underworld Route (Specter) - TRICKERY
+    { id: 'E33', name: 'Bone Hound', art: 'Bone_Hound', faction: FACTIONS.TRICKERY },
+    { id: 'E34', name: 'Wailing Ghoul', art: 'Wailing_Ghoul', faction: FACTIONS.TRICKERY },
+    { id: 'E35', name: 'Death Knight', art: 'Death_Knight', faction: FACTIONS.TRICKERY },
+    { id: 'E36', name: 'Herald of the Underworld', art: 'Herald_of_the_Underworld', faction: FACTIONS.TRICKERY },
+    { id: 'B09', name: 'Specter', art: 'Specter', faction: FACTIONS.TRICKERY },
 ];
 
 // Function to get a card's data by its ID
@@ -121,6 +122,8 @@ export const createEnemyDeck = (enemyConfig) => {
     ];
 
     const enemyCardInfo = Array.isArray(enemyConfig) ? enemyConfig[0] : enemyConfig;
+    // Use the faction from the enemy config if available
+    const enemyFaction = enemyCardInfo.faction || FACTIONS.MIGHT;
 
     let idCounter = 0;
     baseDeck.forEach(cardDef => {
@@ -130,6 +133,7 @@ export const createEnemyDeck = (enemyConfig) => {
                 name: enemyCardInfo.name,
                 number: cardDef.number,
                 art: `/art/cards/${enemyCardInfo.art}.png`,
+                faction: enemyFaction
             });
         }
     });

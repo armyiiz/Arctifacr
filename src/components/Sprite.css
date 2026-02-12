@@ -1,0 +1,85 @@
+.sprite {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  overflow: hidden; /* Hide fallback text if image is present */
+}
+
+/* Fallback text style */
+.sprite-fallback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  font-size: 0.8em;
+}
+
+/* --- Sizes --- */
+.size-sm {
+  width: 24px;
+  height: 24px;
+}
+
+.size-md {
+  width: 48px;
+  height: 48px;
+}
+
+.size-lg {
+  width: 64px;
+  height: 64px;
+}
+
+/* --- Faction Icons --- */
+.sprite-faction-might {
+  background-color: #d32f2f; /* Red */
+  border: 2px solid #b71c1c;
+  border-radius: 50%;
+  /* background-image: url('/art/icons/fist.webp'); */ /* Placeholder */
+}
+
+.sprite-faction-trickery {
+  background-color: #7b1fa2; /* Purple */
+  border: 2px solid #4a148c;
+  border-radius: 50%;
+  /* background-image: url('/art/icons/dagger.webp'); */
+}
+
+.sprite-faction-magic {
+  background-color: #1976d2; /* Blue */
+  border: 2px solid #0d47a1;
+  border-radius: 50%;
+  /* background-image: url('/art/icons/star.webp'); */
+}
+
+/* --- Rank Icons --- */
+/* For ranks, we might want a circle or badge shape */
+[class*="sprite-rank-"] {
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 2px solid gold;
+  border-radius: 50%;
+  color: gold;
+}
+
+.sprite-rank-1 { /* Giant Slayer */
+  border-color: #ff5722;
+}
+
+.sprite-rank-2 { /* Support */
+  border-color: #4caf50;
+}
+
+.sprite-rank-3 { /* Spite */
+  border-color: #9c27b0;
+}
+
+.sprite-rank-9 { /* Boss */
+  border-color: #ffeb3b;
+  box-shadow: 0 0 10px gold;
+}
