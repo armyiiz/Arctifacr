@@ -33,8 +33,11 @@ const loadInitialState = (key, defaultValue) => {
 };
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [playerGold, setPlayerGold] = useState(() => loadInitialState('playerGold', 0));
+  // eslint-disable-next-line no-unused-vars
   const [playerArtifacts, setPlayerArtifacts] = useState(() => loadInitialState('playerArtifacts', []));
+  // eslint-disable-next-line no-unused-vars
   const [playerCollection, setPlayerCollection] = useState(() => loadInitialState('playerCollection', initialPlayerCollection));
 
   // New: Run State Persistence

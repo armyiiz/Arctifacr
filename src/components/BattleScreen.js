@@ -2,9 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Board from './Board';
 import Hand from './Hand';
 import './BattleScreen.css';
-import { createPlayerDeck, createEnemyDeck, shuffleDeck, STAGE_TYPES, FACTIONS } from '../gameLogic';
+import { createPlayerDeck, createEnemyDeck, shuffleDeck, FACTIONS } from '../gameLogic';
 
-const PLAYER_STARTING_HP = 10;
 const ENEMY_STARTING_HP = 10;
 const STARTING_HAND_SIZE = 6;
 const BOARD_SIZE = 4;
@@ -214,6 +213,7 @@ const BattleScreen = ({ stage, onGameOver, playerHP, setPlayerHP }) => {
             setTimeout(() => calculateCombat(revealedPBoard, revealedEBoard), 1000);
         }, 500);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]); // Dependencies handled via control flow
 
   const getFactionBonus = (myFaction, oppFaction) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './DeckEditScreen.css';
 import Card from './Card';
 import { getCardById } from '../gameLogic';
@@ -15,6 +15,7 @@ const DeckEditScreen = ({ onBack, playerCollection }) => {
     const saved = localStorage.getItem('playerDecks');
     return saved ? JSON.parse(saved) : [{ name: 'Default Deck', slots: {} }];
   });
+  // eslint-disable-next-line no-unused-vars
   const [selectedDeckIndex, setSelectedDeckIndex] = useState(0);
   const [deckName, setDeckName] = useState(savedDecks[0].name);
   const [deckSlots, setDeckSlots] = useState(savedDecks[0].slots);
