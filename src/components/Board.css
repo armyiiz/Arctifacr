@@ -1,29 +1,108 @@
 .board-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  background-color: #0a4d0a;
-  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: #2e7d32; /* Green felt color */
+  box-sizing: border-box;
 }
 
 .board-row {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 8px; /* Small gap to fit 4 cards */
+  width: 100%;
+  max-width: 600px; /* Constrain on desktop */
 }
 
-.card-slot {
-  width: 120px;
-  height: 168px;
-  border: 2px dashed #ccc;
-  border-radius: 10px;
+.board-slot {
+  flex: 1; /* Distribute space evenly */
+  aspect-ratio: 100/140; /* Maintain card ratio */
+  position: relative;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.empty-slot {
+.player-slot {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.player-slot:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.board-divider {
+  width: 100%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+/* --- Card Scaling for Slot --- */
+/* Force card to fit slot */
+.board-slot .card-container {
   width: 100%;
   height: 100%;
+  /* If Card component has fixed size, we might need to override */
+}
+
+/* Override Card Container inside Board Slot */
+/* Assuming Card component uses 100px/140px fixed size, we can scale or just set width/height */
+/* Better approach: Let Card component be responsive or use container query.
+   Currently Card.css sets width: 100px; height: 140px;
+   We will override here. */
+.board-slot .card-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Empty Slot Placeholder */
+.empty-slot-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.tap-target span {
+    pointer-events: none; /* Let click pass to slot */
+}
+
+/* --- Intel Overlay --- */
+.card-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.intel-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20; /* Above card back */
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 5px;
+    box-shadow: 0 0 10px gold;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 5px gold; }
+    50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 15px gold; }
+    100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 5px gold; }
 }
