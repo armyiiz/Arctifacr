@@ -132,7 +132,7 @@ export const createEnemyDeck = (enemyConfig) => {
                 id: `e${idCounter++}`,
                 name: enemyCardInfo.name,
                 number: cardDef.number,
-                art: `/art/cards/${enemyCardInfo.art}.png`,
+                art: `/art/cards/${enemyCardInfo.art}.webp`,
                 faction: enemyFaction
             });
         }

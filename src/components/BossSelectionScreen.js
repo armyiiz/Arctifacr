@@ -22,7 +22,11 @@ const BossSelectionScreen = ({ onSelectBoss, playerGold }) => {
       <div className="boss-list">
         {bosses.map(boss => (
           <div key={boss.id} className="boss-card" onClick={() => onSelectBoss(boss.id)}>
-            <img src={`/art/routes/${boss.name}.png`} alt={boss.name} />
+            <img
+              src={`/art/routes/${boss.name}.webp`}
+              alt={boss.name}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
             <h3>{boss.name}</h3>
           </div>
         ))}
