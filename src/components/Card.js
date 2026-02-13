@@ -7,12 +7,12 @@ const Card = ({ card, isFaceUp, onClick, className, showName = true }) => {
 
   // Construct the art URL. Assuming card.art is a filename or path.
   // If it's a full path, use it. If it's just a name, construct it.
-  const artUrl = card.art.startsWith('/') ? card.art : `/art/cards/${card.art}.png`;
+  const artUrl = card.art.startsWith('/') ? card.art : `/art/cards/${card.art}.webp`;
 
   const cardContent = isFaceUp ? (
     <div className="card-face card-front">
       {/* Background Art */}
-      <div className="card-art" style={{ backgroundImage: `url(${artUrl})` }}></div>
+      <div className="card-art" style={{ backgroundImage: `url(${artUrl})`, backgroundColor: '#333' }}></div>
 
       {/* Faction Icon (Top-Left) */}
       <div className="card-faction-icon">

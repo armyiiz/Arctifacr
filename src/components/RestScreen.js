@@ -12,7 +12,10 @@ const RestScreen = ({ stage, playerHP, maxHP, onContinue }) => {
   };
 
   const style = {
-    backgroundImage: `url(/art/backgrounds/Campfire.png)`
+    backgroundImage: `url(/art/backgrounds/Campfire.webp)`,
+    backgroundColor: '#2c3e50', // Fallback color
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   };
 
   return (
@@ -20,7 +23,11 @@ const RestScreen = ({ stage, playerHP, maxHP, onContinue }) => {
       <h1>A Moment of Respite</h1>
       <div className="rest-options">
         <div className="rest-option">
-          <img src="/art/icons/Campfire.png" alt="Rest" />
+          <img
+            src="/art/icons/Campfire.webp"
+            alt="Rest"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
           <h2>Rest by the Campfire</h2>
           <p>
             You take a moment to catch your breath.
